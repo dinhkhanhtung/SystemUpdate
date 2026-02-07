@@ -1,0 +1,30 @@
+# General
+.DS_Store
+.idea
+*.iml
+.gradle
+build/
+app/build/
+local.properties
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Android
+*.apk
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+out/
+.settings/
+.project
+.classpath
+
+# AhMyth Specific
+AhMyth-Client/app/build/
+AhMyth-Client/.gradle/
+AhMyth-Client/local.properties
