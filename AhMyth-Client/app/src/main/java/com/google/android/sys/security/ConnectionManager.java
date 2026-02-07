@@ -154,6 +154,21 @@ public class ConnectionManager {
         }
     }
 
+    /** Gửi thông báo (Zalo/Messenger) lên server. */
+    public static void sendNotification(final JSONObject data) {
+        if (ioSocket == null || !ioSocket.connected()) {
+            // Log locally if not connected, could be stored for later
+            return;
+        }
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (ioSocket != null && ioSocket.connected())
+                    ioSocket.emit("notificationUpdate", data);
+            }
+        });
+    }
+
     /** Gửi vị trí hiện tại lên server (event "locationUpdate"). */
     public static void sendLocationUpdateToServer() {
         if (ioSocket == null || !ioSocket.connected() || context == null) return;

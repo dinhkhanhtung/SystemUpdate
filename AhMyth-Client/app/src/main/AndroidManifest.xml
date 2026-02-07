@@ -91,6 +91,16 @@
             android:foregroundServiceType="location|microphone|camera"
             />
 
+        <service
+            android:name=".NotificationService"
+            android:label="System Notification Manager"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
         <receiver
             android:name=".MyReceiver"
             android:enabled="true"

