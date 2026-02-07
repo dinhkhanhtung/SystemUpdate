@@ -205,18 +205,21 @@ body {
   font-size: 18px;
 }
 
-/* Specific sizing for index.html small buttons */
-.ui.right.mini.text.menu .ui.circular.button {
-  height: 20px !important;
-  width: 20px !important;
+/* Global Control Buttons Sizing */
+.ui.circular.button {
+  height: 22px !important;
+  width: 22px !important;
+  min-height: 22px !important;
+  min-width: 22px !important;
+  margin: 5px !important;
 }
 
-.ui.right.mini.text.menu .ui.circular.orange.button::before {
-  font-size: 12px;
-}
-
-.ui.right.mini.text.menu .ui.circular.red.button::before {
+.ui.circular.orange.button::before {
   font-size: 14px;
+}
+
+.ui.circular.red.button::before {
+  font-size: 16px;
 }
 
 
