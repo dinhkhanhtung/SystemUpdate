@@ -1,0 +1,65 @@
+[2026-02-07T10:28:52.872Z] Server Starting...
+[2026-02-07T10:28:52.873Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T10:33:07.173Z] Server Starting...
+[2026-02-07T10:33:07.173Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T11:03:24.644Z] Server Starting...
+[2026-02-07T11:03:24.645Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T11:05:15.612Z] Server is now listening on port: 42474
+[2026-02-07T11:05:15.612Z] IMPORTANT: Use IP 192.168.1.2 in APK Builder if testing on local Wi-Fi
+[2026-02-07T11:05:17.512Z] New Socket.IO connection! ID: /#r45hxz2iYZW_VmcIAAAA IP: ::ffff:192.168.1.6
+[2026-02-07T11:05:17.512Z] Query params: {"model":"M2101K6G","EIO":"3","id":"169eedcb9d0f4fb7","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-07T11:06:01.323Z] Server Starting...
+[2026-02-07T11:06:01.324Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T11:07:35.813Z] Server is now listening on port: 42474
+[2026-02-07T11:07:35.813Z] IMPORTANT: Use IP 192.168.1.2 in APK Builder if testing on local Wi-Fi
+[2026-02-07T11:07:56.133Z] Server is now listening on port: 42474
+[2026-02-07T11:07:56.133Z] IMPORTANT: Use IP 192.168.1.2 in APK Builder if testing on local Wi-Fi
+[2026-02-07T11:08:49.374Z] New Socket.IO connection! ID: /#N_N2Z-A_QhMc8WoHAAAA IP: ::ffff:192.168.1.6
+[2026-02-07T11:08:49.374Z] Query params: {"model":"M2101K6G","EIO":"3","id":"169eedcb9d0f4fb7","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-07T11:11:27.284Z] Server Starting...
+[2026-02-07T11:11:27.285Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T11:13:49.166Z] Server is now listening on port: 42474
+[2026-02-07T11:13:49.166Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T11:14:26.010Z] Server is now listening on port: 42474
+[2026-02-07T11:14:26.011Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T11:16:57.712Z] Server Starting...
+[2026-02-07T11:16:57.713Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T11:17:26.185Z] Server is now listening on port: 42474
+[2026-02-07T11:17:26.186Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T11:22:08.697Z] Server Starting...
+[2026-02-07T11:22:08.698Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T11:22:25.119Z] Server is now listening on port: 42474
+[2026-02-07T11:22:25.119Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T11:25:02.088Z] Server is now listening on port: 42474
+[2026-02-07T11:25:02.088Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T11:26:14.756Z] Server is now listening on port: 42474
+[2026-02-07T11:26:14.757Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T11:34:04.748Z] Server is now listening on port: 42474
+[2026-02-07T11:34:04.748Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T11:55:08.380Z] Incoming HTTP request: GET /test from: ::ffff:127.0.0.1
+[2026-02-07T11:57:33.821Z] Server is now listening on port: 42474
+[2026-02-07T11:57:33.822Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T11:59:58.824Z] Server Starting...
+[2026-02-07T11:59:58.825Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T12:00:03.838Z] Server is now listening on port: 42474
+[2026-02-07T12:00:03.839Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T12:01:47.896Z] Server is now listening on port: 42474
+[2026-02-07T12:01:47.897Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T12:08:44.971Z] Incoming HTTP request: GET /test?zarsrc=30&utm_source=zalo&utm_medium=zalo&utm_campaign=zalo from: ::ffff:171.244.121.13
+[2026-02-07T12:11:02.948Z] Server is now listening on port: 42474
+[2026-02-07T12:11:02.949Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T12:12:46.791Z] Incoming HTTP request: GET /test from: ::ffff:127.0.0.1
+[2026-02-07T12:21:08.167Z] Server is now listening on port: 42474
+[2026-02-07T12:21:08.168Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T12:21:15.500Z] New Socket.IO connection! ID: /#CcX7PtjEVTNF9hDvAAAA IP: ::ffff:195.80.150.194
+[2026-02-07T12:21:15.501Z] Query params: {"model":"M2101K6G","EIO":"3","id":"169eedcb9d0f4fb7","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-07T12:21:38.064Z] Incoming HTTP request: GET /test?zarsrc=30&utm_source=zalo&utm_medium=zalo&utm_campaign=zalo from: ::ffff:195.80.150.194
+[2026-02-07T12:22:16.996Z] Server is now listening on port: 42474
+[2026-02-07T12:22:16.997Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T12:23:06.076Z] Victim disconnected: 169eedcb9d0f4fb7
+[2026-02-07T12:30:41.961Z] New Socket.IO connection! ID: /#a-6GccKUZ3mGurNxAAAB IP: ::ffff:1.54.210.68
+[2026-02-07T12:30:41.962Z] Query params: {"model":"M2101K6G","EIO":"3","id":"169eedcb9d0f4fb7","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-07T12:33:15.038Z] New Socket.IO connection! ID: /#BFPHfU6L_IsavH0rAAAC IP: ::ffff:14.249.216.248
+[2026-02-07T12:33:15.039Z] Query params: {"model":"M2101K6G","EIO":"3","id":"169eedcb9d0f4fb7","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-07T12:34:13.585Z] Victim disconnected: 169eedcb9d0f4fb7
+[2026-02-07T12:45:35.897Z] Victim disconnected: 169eedcb9d0f4fb7

