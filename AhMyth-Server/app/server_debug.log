@@ -80,3 +80,4 @@
 [2026-02-07T13:06:37.332Z] Victim disconnected: 169eedcb9d0f4fb7
 [2026-02-07T13:08:38.299Z] New Socket.IO connection! ID: /#uSy9Vzy799KiOMLZAAAB IP: ::ffff:188.241.178.98
 [2026-02-07T13:08:38.299Z] Query params: {"model":"M2101K6G","EIO":"3","id":"169eedcb9d0f4fb7","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-07T13:10:50.339Z] Victim disconnected: 169eedcb9d0f4fb7
