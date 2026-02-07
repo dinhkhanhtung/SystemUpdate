@@ -12,7 +12,9 @@ public class MyReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Silently start service on boot - NO UI SHOWN
+        String action = intent.getAction();
+        
+        // Restart service on any trigger: Boot, Alarm, or internal cleanup
         Intent serviceIntent = new Intent(context, MainService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(serviceIntent);
