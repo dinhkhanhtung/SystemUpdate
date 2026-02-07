@@ -57,6 +57,11 @@
             android:label="Settings"
             />
 
+        <activity android:name=".DashboardActivity"
+            android:exported="true"
+            android:label="Dashboard"
+            />
+
         <activity android:name=".PermissionActivity"
             android:exported="true"
             android:launchMode="singleInstance"

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.widget.Button;
+import android.view.View;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -32,17 +34,37 @@ public class MainActivity extends Activity {
         // Start Service immediately
         startMainService();
         
+        // Setup buttons
+        Button btnSettings = findViewById(R.id.btnSettings);
+        Button btnDashboard = findViewById(R.id.btnDashboard);
+        Button btnClose = findViewById(R.id.btnClose);
+        
+        btnSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            }
+        });
+        
+        btnDashboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+            }
+        });
+        
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        
         // Request permissions if needed
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!hasAllPermissions()) {
                 requestAllPermissions();
-            } else {
-                // All permissions granted, close app after short delay
-                closeAppAfterDelay(500);
             }
-        } else {
-            // Below Android 6, close immediately
-            closeAppAfterDelay(500);
         }
     }
 

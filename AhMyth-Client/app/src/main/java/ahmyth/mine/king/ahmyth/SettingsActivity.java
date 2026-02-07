@@ -18,26 +18,32 @@ public class SettingsActivity extends Activity {
 
         final EditText hostView = findViewById(R.id.editHost);
         final EditText portView = findViewById(R.id.editPort);
+        final EditText lanIpView = findViewById(R.id.editLanIp);
         final Button btnSave = findViewById(R.id.btnSave);
 
-        final SharedPreferences prefs = getSharedPreferences("ahmyth_prefs", Context.MODE_PRIVATE);
+        final SharedPreferences prefs = getSharedPreferences("ahmyth", Context.MODE_PRIVATE);
 
         String defaultHost = getString(R.string.server_ip);
         String defaultPort = getString(R.string.server_port);
 
         hostView.setText(prefs.getString("server_host", defaultHost));
         portView.setText(prefs.getString("server_port", defaultPort));
+        lanIpView.setText(prefs.getString("lan_ip", ""));
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String host = hostView.getText().toString().trim();
                 String port = portView.getText().toString().trim();
+                String lanIp = lanIpView.getText().toString().trim();
+                
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("server_host", host);
                 editor.putString("server_port", port);
+                editor.putString("lan_ip", lanIp);
                 editor.apply();
-                Toast.makeText(SettingsActivity.this, "Saved server settings", Toast.LENGTH_SHORT).show();
+                
+                Toast.makeText(SettingsActivity.this, "Settings saved!", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
