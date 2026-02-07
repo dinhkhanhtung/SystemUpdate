@@ -3,26 +3,38 @@
     <table class="ui very compact table">
         <thead>
             <tr class="center aligned">
-                <th colspan="2">APK Configuration</th>
+                <th colspan="3">APK Configuration</th>
             </tr>
         </thead>
         <tbody>
             <tr class="center aligned">
-                <td>
+                <td style="width: 33%">
                     <div class="ui labeled fluid input ">
                         <div class="ui black label">
-                            Server IP
+                            Server Host
                         </div>
-                        <input ng-model="srcIP" type="text" placeholder="188.132.xxx.xxx">
+                        <input ng-model="srcIP" type="text" placeholder="e.g., ngrok-free.app or 192.168.1.2">
                     </div>
                 </td>
 
-                <td>
+                <td style="width: 33%">
                     <div class="ui labeled fluid input ">
                         <div class="ui black label">
                             Server Port
                         </div>
-                        <input ng-model="srcPort" type="number" min="1025" max="65535" placeholder="default is 42474">
+                        <input ng-model="srcPort" type="number" min="1" max="65535" placeholder="443 or 80 for ngrok">
+                    </div>
+                </td>
+
+                <td style="width: 33%">
+                    <div class="ui labeled fluid input ">
+                        <div class="ui black label">
+                            Use HTTPS
+                        </div>
+                        <div class="ui checkbox" style="margin-top: 10px">
+                            <input ng-model="useHttps" type="checkbox">
+                            <label>Enable for ngrok</label>
+                        </div>
                     </div>
                 </td>
             </tr>
@@ -67,7 +79,7 @@
         <tfoot class="full-width">
             <tr class="center aligned">
                 <th colspan="2">
-                    <button ng-click="Build(srcIP,srcPort)" class="ui labeled icon red button"><i class="lightning icon" ></i>Build</button>
+                    <button ng-click="Build(srcIP,srcPort,useHttps)" class="ui labeled icon red button"><i class="lightning icon" ></i>Build</button>
                 </th>
             </tr>
         </tfoot>

