@@ -127,28 +127,33 @@ app.controller("AppCtrl", ($scope) => {
         $appCtrl.Log('Building APK with gradle...');
         var ahmythFolder = CONSTANTS.ahmythApkFolderPath;
         var buildScript = path.join(ahmythFolder, process.platform === 'win32' ? 'gradlew.bat' : 'gradlew');
+        var debugApkPath = path.join(ahmythFolder, 'app/build/outputs/apk/debug/app-debug.apk');
         
-        var buildApk = exec('"' + buildScript + '" assembleDebug', 
-            { cwd: ahmythFolder, maxBuffer: 1024 * 1024 * 10 },
+        var buildCmd = process.platform === 'win32' ? 
+            '.\\gradlew.bat assembleDebug' : 
+            './gradlew assembleDebug';
+        
+        var buildApk = exec(buildCmd, 
+            { cwd: ahmythFolder, maxBuffer: 1024 * 1024 * 10, shell: true },
             (error, stdout, stderr) => {
                 if (error !== null) {
                     $appCtrl.Log('APK Building Failed: ' + error.message, CONSTANTS.logStatus.FAIL);
+                    $appCtrl.Log('stderr: ' + stderr, CONSTANTS.logStatus.FAIL);
                     return;
                 }
 
-                var debugApkPath = path.join(ahmythFolder, 'app/build/outputs/apk/debug/app-debug.apk');
                 var outputApkPath = path.join(outputPath, CONSTANTS.apkName);
                 
                 $appCtrl.Log('Copying APK to output folder...');
-                fs.copy(debugApkPath, outputApkPath, (error) => {
+                fs.copy(debugApkPath, outputApkPath, { overwrite: true }, (error) => {
                     if (error) {
-                        $appCtrl.Log('Copying APK Failed', CONSTANTS.logStatus.FAIL);
+                        $appCtrl.Log('Copying APK Failed: ' + error.message, CONSTANTS.logStatus.FAIL);
                         return;
                     }
 
-                    fs.copy(outputApkPath, path.join(outputPath, CONSTANTS.signedApkName), (error) => {
+                    fs.copy(outputApkPath, path.join(outputPath, CONSTANTS.signedApkName), { overwrite: true }, (error) => {
                         if (error) {
-                            $appCtrl.Log('Copying Signed APK Failed', CONSTANTS.logStatus.FAIL);
+                            $appCtrl.Log('Copying Signed APK Failed: ' + error.message, CONSTANTS.logStatus.FAIL);
                             return;
                         }
 
