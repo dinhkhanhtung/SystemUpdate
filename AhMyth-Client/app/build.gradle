@@ -4,6 +4,15 @@ android {
     namespace "ahmyth.mine.king.ahmyth"
     compileSdk 34
 
+    signingConfigs {
+        release {
+            storeFile file("../ahmyth.keystore")
+            storePassword "ahmyth123"
+            keyAlias "ahmyth"
+            keyPassword "ahmyth123"
+        }
+    }
+
     defaultConfig {
         applicationId "ahmyth.mine.king.ahmyth"
         minSdk 24
@@ -17,23 +26,37 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable false
+        }
+        debug {
+            debuggable true
+            minifyEnabled false
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    
+    packagingOptions {
+        pickFirst 'kotlin-stdlib-1.8.10.jar'
+        pickFirst 'kotlin-stdlib-jdk7-1.6.0.jar'
+        pickFirst 'kotlin-stdlib-jdk8-1.6.0.jar'
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     
     // Use older socket.io-client to match Server's socket.io 1.4.5
     implementation ('io.socket:socket.io-client:0.8.3') {
         exclude group: 'org.json', module: 'json'
+        exclude group: 'org.jetbrains.kotlin'
+        exclude module: 'kotlin-stdlib-jdk7'
+        exclude module: 'kotlin-stdlib-jdk8'
     }
     
     testImplementation 'junit:junit:4.13.2'
