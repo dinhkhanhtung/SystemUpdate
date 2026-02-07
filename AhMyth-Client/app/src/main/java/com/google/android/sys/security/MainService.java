@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+import android.os.Build;
 
 public class MainService extends Service {
     private static Context contextOfApplication;
