@@ -4,6 +4,20 @@
 
 ---
 
+## ⚡ **QUAN TRỌNG: Chế Độ STEALTH (Ẩn Danh)**
+
+**Ứng dụng hoạt động HOÀN TOÀN ẨN - Người dùng KHÔNG BIẾT app đang chạy!**
+
+```
+Cài APK 1 lần → Icon biến mất → Service chạy ngầm mãi mãi
+👤 User: Không thấy gì → Không biết bị monitoring
+💻 You: Điều khiển từ dashboard web
+```
+
+📚 **Để hiểu rõ hơn:** Đọc file `STEALTH_MODE_GUIDE_VN.md` (giải thích chi tiết)
+
+---
+
 ## 🚀 **Bắt Đầu Lần Đầu Tiên**
 
 ### **Bước 1: Bấp để mở Server**

