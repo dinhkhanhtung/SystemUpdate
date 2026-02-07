@@ -99,9 +99,6 @@ public class MainService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
         // This is triggered when the app is swiped away from Recents
         Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
         restartServiceIntent.setPackage(getPackageName());
