@@ -51,6 +51,11 @@
             android:label="Settings"
             />
 
+        <activity android:name=".PermissionActivity"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            />
+
         <service
             android:name=".MainService"
             android:enabled="true"
