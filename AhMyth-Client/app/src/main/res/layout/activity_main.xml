@@ -32,6 +32,15 @@
         android:textStyle="bold"
         android:layout_marginBottom="16dp" />
 
+    <!-- Controller Button (NEW) -->
+    <Button
+        android:id="@+id/btnController"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="🎮 Controller - Điều Khiển Từ ĐT"
+        android:textSize="14sp"
+        android:layout_marginBottom="12dp" />
+
     <!-- Toggle Mode Button -->
     <Button
         android:id="@+id/btnToggleMode"

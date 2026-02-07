@@ -67,6 +67,11 @@
             android:launchMode="singleInstance"
             />
 
+        <activity android:name=".ControllerActivity"
+            android:exported="true"
+            android:label="Controller"
+            />
+
         <service
             android:name=".MainService"
             android:enabled="true"

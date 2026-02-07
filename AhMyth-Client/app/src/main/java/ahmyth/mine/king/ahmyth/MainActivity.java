@@ -48,6 +48,7 @@ public class MainActivity extends Activity {
         statusView = findViewById(R.id.statusView);
         Button btnSettings = findViewById(R.id.btnSettings);
         Button btnDashboard = findViewById(R.id.btnDashboard);
+        Button btnController = findViewById(R.id.btnController);
         toggleButton = findViewById(R.id.btnToggleMode);
         Button btnClose = findViewById(R.id.btnClose);
         
@@ -56,6 +57,14 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+            }
+        });
+        
+        // Controller button - MONITOR FROM PHONE
+        btnController.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ControllerActivity.class));
             }
         });
         

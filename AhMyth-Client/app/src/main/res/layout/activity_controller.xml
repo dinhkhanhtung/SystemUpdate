@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="#f5f5f5">
+
+    <!-- Header -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🎮 AhMyth Controller"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#1976d2"
+        android:padding="10dp"
+        android:gravity="center" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Điều khiển các devices từ điện thoại"
+        android:textSize="14sp"
+        android:textColor="#666"
+        android:gravity="center"
+        android:paddingBottom="15dp" />
+
+    <!-- Connection Settings -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_box"
+        android:padding="15dp"
+        android:backgroundTint="#e3f2fd"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Server Connection"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#1976d2"
+            android:paddingBottom="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nhập địa chỉ server (LAN hoặc Remote):"
+            android:textSize="12sp"
+            android:textColor="#666"
+            android:paddingBottom="5dp" />
+
+        <EditText
+            android:id="@+id/etServerUrl"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:inputType="text"
+            android:hint="192.168.1.x:42474 hoặc ngrok URL"
+            android:background="@android:drawable/edit_text"
+            android:padding="10dp"
+            android:textSize="14sp"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btnConnect"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:text="🔗 Connect to Server"
+            android:textStyle="bold"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="#1976d2"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="5dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ví dụ:\n📡 LAN (nhanh): 192.168.1.100:42474\n🌍 Remote (Ngrok): https://abc-xyz.ngrok-free.app:443"
+            android:textSize="11sp"
+            android:textColor="#999"
+            android:linksClickable="true"
+            android:padding="5dp" />
+
+    </LinearLayout>
+
+    <!-- WebView for Dashboard -->
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/white" />
+
+    <!-- Footer -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="#e0e0e0">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="💡 Tip: Lưu URL để lần sau không cần nhập lại"
+            android:textSize="12sp"
+            android:textColor="#666" />
+
+    </LinearLayout>
+
+</LinearLayout>
