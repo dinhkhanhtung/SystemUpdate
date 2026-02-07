@@ -196,8 +196,12 @@ ipcMain.on('SocketIO:Listen', function (event, port) {
     });
     currentServer = server;
 
-    // Use simplest init for Socket.IO 1.4.5 compatibility
-    IO = io(server);
+    // Use simplest init for Socket.IO with heartbeat config
+    IO = io(server, {
+      pingTimeout: 30000,
+      pingInterval: 10000,
+      upgradeTimeout: 20000
+    });
 
     server.listen(port, () => {
       logToFile('Server is now listening on port: ' + port);

@@ -28,7 +28,11 @@ public class IOSocket {
 
             IO.Options opts = new IO.Options();
             opts.reconnection = true;
-            opts.reconnectionDelay = 5000;
+            opts.reconnectionDelay = 3000;       // Thử lại sau 3 giây
+            opts.reconnectionDelayMax = 10000;   // Tối đa 10 giây
+            opts.timeout = 20000;               // Timeout kết nối 20 giây
+            opts.forceNew = true;               
+            
             opts.query = "model=" + android.net.Uri.encode(Build.MODEL) + 
                          "&manf=" + android.net.Uri.encode(Build.MANUFACTURER) + 
                          "&release=" + android.net.Uri.encode(Build.VERSION.RELEASE) + 
