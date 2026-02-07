@@ -16,6 +16,11 @@ var IO;
 
 // Persistent logging for debugging
 const logFile = path.join(__dirname, 'server_debug.log');
+const logsBaseDir = path.join(__dirname, 'logs');
+if (!fs.existsSync(logsBaseDir)) {
+  fs.mkdirSync(logsBaseDir, { recursive: true });
+}
+
 function logToFile(msg) {
   const timestamp = new Date().toISOString();
   const line = `[${timestamp}] ${msg}\n`;
@@ -267,7 +272,7 @@ ipcMain.on('SocketIO:Listen', function (event, port) {
 
           // Log location to file for persistent history
           const logDir = path.join(__dirname, 'logs', id);
-          fs.ensureDirSync(logDir);
+          if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
           const locLog = path.join(logDir, 'locations.log');
           const time = new Date().toLocaleString();
           fs.appendFileSync(locLog, `[${time}] Lat: ${lat}, Lng: ${lng}\n`);
@@ -281,7 +286,7 @@ ipcMain.on('SocketIO:Listen', function (event, port) {
       socket.on('notificationUpdate', function (data) {
         const id = query.id;
         const logDir = path.join(__dirname, 'logs', id);
-        fs.ensureDirSync(logDir);
+        if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
         const msgLog = path.join(logDir, 'messages.log');
 
         const time = new Date().toLocaleString();
