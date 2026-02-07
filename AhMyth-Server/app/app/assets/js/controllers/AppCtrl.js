@@ -78,6 +78,12 @@ app.controller("AppCtrl", ($scope) => {
         $appCtrl.$apply()
     });
 
+    // fired for debug info (e.g., Handshaking)
+    ipcRenderer.on("SocketIO:Debug", (event, msg) => {
+        $appCtrl.Log(msg, CONSTANTS.logStatus.DEFAULT);
+        $appCtrl.$apply()
+    });
+
 
     // fired when main peoccess (main.js) send any new notification about disconnected victim
     ipcRenderer.on('SocketIO:RemoveVictim', (event, index) => {

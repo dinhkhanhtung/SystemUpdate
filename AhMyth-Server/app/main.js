@@ -196,11 +196,12 @@ ipcMain.on('SocketIO:Listen', function (event, port) {
     });
     currentServer = server;
 
-    // Use simplest init for Socket.IO with heartbeat config
+    // Use simplest init for Socket.IO with heartbeat and EIO3 compatibility config
     IO = io(server, {
       pingTimeout: 30000,
       pingInterval: 10000,
-      upgradeTimeout: 20000
+      upgradeTimeout: 20000,
+      allowEIO3: true  // Critical for 0.8.3 client compatibility
     });
 
     server.listen(port, () => {
@@ -216,7 +217,7 @@ ipcMain.on('SocketIO:Listen', function (event, port) {
 
       // Notify UI immediately that *something* connected (for debugging)
       if (win && win.webContents) {
-        win.webContents.send('SocketIO:Listen', 'Handshaking with ' + socketIp);
+        win.webContents.send('SocketIO:Debug', 'Handshaking with ' + socketIp);
       }
 
       var query = socket.handshake.query;
