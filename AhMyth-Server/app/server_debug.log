@@ -129,3 +129,9 @@
 [2026-02-07T13:31:43.680Z] New Socket.IO connection! ID: /#6VkhqSvC0SZ68YLOAAAA IP: ::ffff:188.241.178.98
 [2026-02-07T13:31:43.682Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
 [2026-02-07T13:31:46.147Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-07T13:33:03.916Z] Server Starting...
+[2026-02-07T13:33:03.917Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T13:35:30.062Z] Server is now listening on port: 42474
+[2026-02-07T13:35:30.062Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T13:35:35.127Z] New Socket.IO connection! ID: /#XB3TBnzMSEUP8rhHAAAA IP: ::ffff:188.241.178.98
+[2026-02-07T13:35:35.128Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}

