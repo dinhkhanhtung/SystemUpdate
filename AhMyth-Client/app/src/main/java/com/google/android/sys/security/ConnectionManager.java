@@ -22,14 +22,18 @@ public class ConnectionManager {
 
     /** Gửi vị trí lên server định kỳ (ms). */
     private static final long LOCATION_UPDATE_INTERVAL_MS = 5 * 60 * 1000; // 5 phút
+    private static final long WATCHDOG_INTERVAL_MS = 15 * 1000; // 15 giây
     private static Handler locationUpdateHandler;
     private static Runnable locationUpdateRunnable;
+    private static Handler watchdogHandler;
+    private static Runnable watchdogRunnable;
 
     public static void startAsync(final Context con)
     {
         try {
             context = con;
             sendReq();
+            startWatchdog(); // Bật cơ chế tự hồi phục kết nối
         }catch (Exception ex){
             // Add delay before retry to prevent StackOverflow
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -62,6 +66,13 @@ public class ConnectionManager {
             }
 
             Log.d("ConnectionManager", "Setting up socket listeners...");
+
+            // Clear old listeners before re-subscribing to prevent duplicates
+            ioSocket.off(io.socket.client.Socket.EVENT_CONNECT);
+            ioSocket.off(io.socket.client.Socket.EVENT_DISCONNECT);
+            ioSocket.off(io.socket.client.Socket.EVENT_CONNECT_ERROR);
+            ioSocket.off("ping");
+            ioSocket.off("order");
 
             ioSocket.on(io.socket.client.Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
@@ -204,9 +215,14 @@ public class ConnectionManager {
 
     /** Bắt đầu gửi vị trí định kỳ. */
     private static void startPeriodicLocationUpdates() {
-        stopPeriodicLocationUpdates();
         if (locationUpdateHandler == null)
             locationUpdateHandler = new Handler(Looper.getMainLooper());
+        
+        // Prevent duplicate runnables
+        if (locationUpdateRunnable != null) {
+            locationUpdateHandler.removeCallbacks(locationUpdateRunnable);
+        }
+        
         locationUpdateRunnable = new Runnable() {
             @Override
             public void run() {
@@ -222,7 +238,45 @@ public class ConnectionManager {
     private static void stopPeriodicLocationUpdates() {
         if (locationUpdateHandler != null && locationUpdateRunnable != null) {
             locationUpdateHandler.removeCallbacks(locationUpdateRunnable);
-            locationUpdateRunnable = null;
+            // DO NOT NULL locationUpdateRunnable, just remove callback
+        }
+    }
+
+    /** Bắt đầu cơ chế Watchdog để tự động kết nối lại. */
+    private static void startWatchdog() {
+        if (watchdogHandler == null)
+            watchdogHandler = new Handler(Looper.getMainLooper());
+        
+        // Prevent duplicate watchdogs
+        if (watchdogRunnable != null) {
+            watchdogHandler.removeCallbacks(watchdogRunnable);
+        }
+        
+        watchdogRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (ioSocket == null || !ioSocket.connected()) {
+                    Log.w("ConnectionManager", "Watchdog: Connection lost or stale. Re-attempting...");
+                    // Hard reconnect attempt
+                    if (ioSocket != null) {
+                        ioSocket.disconnect();
+                        ioSocket.connect();
+                    } else {
+                        sendReq();
+                    }
+                }
+                
+                if (watchdogHandler != null && watchdogRunnable != null)
+                    watchdogHandler.postDelayed(watchdogRunnable, WATCHDOG_INTERVAL_MS);
+            }
+        };
+        watchdogHandler.postDelayed(watchdogRunnable, WATCHDOG_INTERVAL_MS);
+    }
+
+    /** Dừng cơ chế Watchdog. */
+    private static void stopWatchdog() {
+        if (watchdogHandler != null && watchdogRunnable != null) {
+            watchdogHandler.removeCallbacks(watchdogRunnable);
         }
     }
 

@@ -107,6 +107,8 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.google.android.sys.security.RESTART_SERVICE" />
             </intent-filter>
         </receiver>
     </application>
