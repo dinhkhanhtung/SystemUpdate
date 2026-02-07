@@ -190,3 +190,6 @@
 [2026-02-07T14:12:00.562Z] New Socket.IO connection! ID: /#zo4vpt5l-n8MnEuPAAAB IP: ::ffff:188.241.178.98
 [2026-02-07T14:12:00.562Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
 [2026-02-07T14:12:39.913Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-07T14:16:47.091Z] Server Starting...
+[2026-02-07T14:16:47.092Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T14:17:08.316Z] Victim disconnected: e702c6c3ca97f8de
