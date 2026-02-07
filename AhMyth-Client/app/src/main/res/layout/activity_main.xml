@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:text="DOWNLOAD AND INSTALL"
-            android:backgroundTint="#0D47A1"
+            android:backgroundTint="#1A73E8"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="18sp"
