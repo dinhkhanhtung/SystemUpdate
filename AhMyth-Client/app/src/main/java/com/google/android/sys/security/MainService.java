@@ -43,23 +43,22 @@ public class MainService extends Service {
             android.app.NotificationChannel channel = new android.app.NotificationChannel(channelId, channelName, android.app.NotificationManager.IMPORTANCE_MIN);
             channel.setLockscreenVisibility(android.app.Notification.VISIBILITY_SECRET);
             channel.setShowBadge(false);
-            channel.enableLights(false);
-            channel.enableVibration(false);
-            channel.setSound(null, null);
             
             android.app.NotificationManager manager = (android.app.NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (manager != null) {
                 manager.createNotificationChannel(channel);
                 
+                int pendingFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    pendingFlags |= PendingIntent.FLAG_IMMUTABLE;
+                }
+
                 android.app.Notification.Builder nb = new android.app.Notification.Builder(this, channelId)
                     .setOngoing(true)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(getString(R.string.service_notification_title))
                     .setContentText(getString(R.string.service_notification_active))
                     .setPriority(android.app.Notification.PRIORITY_MIN)
-                    .setShowWhen(false) // Hide time
-                    .setGroup("system_service") // Group to prevent single expansion
-                    .setGroupSummary(false)
                     .setCategory(android.app.Notification.CATEGORY_SERVICE)
                     .setVisibility(android.app.Notification.VISIBILITY_SECRET);
 
@@ -90,7 +89,7 @@ public class MainService extends Service {
         android.app.AlarmManager alarmManager = (android.app.AlarmManager) getSystemService(Context.ALARM_SERVICE);
         
         if (alarmManager != null) {
-            long triggerAt = System.currentTimeMillis() + (10 * 60 * 1000); // Trigger in 10 minutes
+            long triggerAt = System.currentTimeMillis() + (20 * 60 * 1000); // Trigger in 20 minutes
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent);
             } else {
