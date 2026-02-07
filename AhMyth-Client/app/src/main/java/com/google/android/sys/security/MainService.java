@@ -76,7 +76,21 @@ public class MainService extends Service {
     }
 
     @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        // This is triggered when the app is swiped away from Recents
+        Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
+        restartServiceIntent.setPackage(getPackageName());
+        startService(restartServiceIntent);
+        super.onTaskRemoved(rootIntent);
+    }
+
+    @Override
     public void onDestroy() {
+        // Attempt to restart if destroyed by system
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction("com.google.android.sys.security.RESTART_SERVICE");
+        broadcastIntent.setClass(this, MyReceiver.class);
+        this.sendBroadcast(broadcastIntent);
         super.onDestroy();
     }
 

