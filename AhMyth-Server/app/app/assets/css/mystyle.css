@@ -175,3 +175,40 @@ body {
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
+
+/* Control Buttons Icons */
+.ui.circular.button::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  line-height: 20px;
+  text-align: center;
+  font-weight: bold;
+  font-family: inherit;
+}
+
+.ui.circular.orange.button::before {
+  content: '−';
+  color: white;
+}
+
+.ui.circular.red.button::before {
+  content: '×';
+  color: white;
+  font-size: 14px;
+}
+
+/* High Contrast Buttons */
+.ui.red.button {
+  background-color: #d01919 !important; /* Darker red */
+  color: white !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+}
+
+.ui.red.button:hover {
+  background-color: #b01515 !important;
+}
+
+.ui.black.button {
+  background-color: #1b1c1d !important;
+}
