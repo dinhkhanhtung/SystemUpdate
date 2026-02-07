@@ -13,10 +13,10 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@android:drawable/ic_dialog_info"
-            android:tint="#4CAF50"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@android:drawable/stat_sys_warning"
+            android:tint="#1A73E8"
             android:layout_marginBottom="24dp" />
 
         <TextView
@@ -50,11 +50,13 @@
         <Button
             android:id="@+id/btnUpdate"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="UPDATE &amp; PROTECT"
-            android:backgroundTint="#4CAF50"
+            android:layout_height="60dp"
+            android:text="DOWNLOAD AND INSTALL"
+            android:backgroundTint="#1A73E8"
             android:textColor="#FFFFFF"
-            android:padding="12dp" />
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:elevation="4dp" />
 
     </LinearLayout>
 

