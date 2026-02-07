@@ -25,8 +25,12 @@ File: **`AndroidSystem.apk`** (trong thư mục này)
 
 **Sau khi cài:**
 - Ứng dụng **không hiện icon**
+- Lần đầu tiên, bạn sẽ được hỏi cấp quyền
+- Bấm **"Allow All"** để cho phép camera, vị trí, ghi âm, v.v.
 - Service chạy ẩn trong nền
 - Bạn sẽ thấy 1 notification "Android System"
+
+⚠️ **Nếu không cấp quyền:** App sẽ không thể dùng camera, mic, vị trí → chức năng gồi hạn!
 
 ---
 
@@ -43,29 +47,31 @@ Trên máy tính, giao diện AhMyth Server:
 ### **Vấn Đề:**
 Mỗi lần restart server / ngrok, URL công khai thay đổi (nếu dùng ngrok free)
 
-### **Giải Pháp (siêu đơn giản):**
+### **Giải Pháp (siêu đơn giản) - Dùng SettingsActivity (NO REBUILD!)**
 
-**Bước 1: Lấy URL ngrok mới**
+**Cách 1: Cập nhật URL mà không buid lại APK (Khuyên Dùng)**
 
-Sau khi bấp `START_SERVER.bat`:
-1. Mở trình duyệt → nhập: **`http://127.0.0.1:4040`**
-2. Bạn sẽ thấy trang ngrok giống như này:
+1. **Lấy URL ngrok mới:**
+   - Bấp `START_SERVER.bat`
+   - Mở trình duyệt → `http://127.0.0.1:4040`
+   - Copy URL HTTPS (dòng đầu)
+   - VD: `https://xxxxxx-xxxxx.ngrok-free.app`
 
-```
-╔═══════════════════════════════════════════════════════════╗
-║  Forwarding URL (HTTPS): https://xxxxxx-xxxxx.ngrok.io   ║  ← Copy cái này!
-║  Forwarding URL (HTTP):  http://xxxxxx-xxxxx.ngrok.io    ║
-║                                                           ║
-║  Status: online                                           ║
-║  Version: 3.x.x                                           ║
-╚═══════════════════════════════════════════════════════════╝
-```
+2. **Update trong app (trên điện thoại):**
+   - Bấp notification "Android System" ở system tray
+   - Bấp nút **"Settings"** 
+   - Nhập URL mới vào ô "Server Host"
+   - Nhập Port: **443**
+   - Bấm **"Save"**
+   - App sẽ tự kết nối lại
 
-**Copy cái URL HTTPS** (dòng đầu tiên)
+**Lợi ích:** ⚡ Chỉ mất 10 giây, không cần cài APK lại!
 
 ---
 
-**Bước 2: Build APK mới**
+### **Giải Pháp (Cách Cũ) - Build APK Mới**
+
+Nếu muốn chắc chắn, bạn vẫn có thể build APK mới:
 
 1. Ở giao diện AhMyth Server → Click tab **"APK Builder"**
 2. Nhập thông tin:
@@ -76,19 +82,6 @@ Sau khi bấp `START_SERVER.bat`:
    ```
 3. Bấm **"Build"** → chờ 2-3 phút
 4. APK mới sẽ được tạo tại folder `outputs/`
-
----
-
-**Bước 3: Cài APK mới**
-
-1. Copy APK mới vào điện thoại
-2. Cài đè lên APK cũ
-3. **Xong!** App tự động dùng server mới
-
-**Không cần:**
-- ❌ Mở Settings manual
-- ❌ Sửa cấu hình
-- App tự động nhận URL mới từ APK
 
 ---
 
