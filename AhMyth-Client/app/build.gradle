@@ -24,14 +24,17 @@ android {
     
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             debuggable false
             signingConfig signingConfigs.release
         }
         debug {
             debuggable true
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release // Use same signature for debug to allow updates
         }
     }
