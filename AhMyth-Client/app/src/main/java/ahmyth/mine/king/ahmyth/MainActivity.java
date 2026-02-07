@@ -3,16 +3,22 @@ package ahmyth.mine.king.ahmyth;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 import android.view.View;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 public class MainActivity extends Activity {
     private static final int PERMISSION_REQUEST_CODE = 100;
+    private ServerConnectionChecker checker;
+    private TextView statusView;
+    private Button toggleButton;
+    private SharedPreferences prefs;
     
     private static final String[] REQUIRED_PERMISSIONS = {
         Manifest.permission.CAMERA,
@@ -31,21 +37,20 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        prefs = getSharedPreferences("ahmyth", MODE_PRIVATE);
+        checker = new ServerConnectionChecker(this);
+        
         // Start Service immediately
         startMainService();
         
-        // Setup buttons
+        // Setup UI
+        statusView = findViewById(R.id.statusView);
         Button btnSettings = findViewById(R.id.btnSettings);
         Button btnDashboard = findViewById(R.id.btnDashboard);
+        toggleButton = findViewById(R.id.btnToggleMode);
         Button btnClose = findViewById(R.id.btnClose);
         
-        btnSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-            }
-        });
-        
+        // Dashboard button - MAIN ACTION
         btnDashboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,6 +58,23 @@ public class MainActivity extends Activity {
             }
         });
         
+        // Settings button
+        btnSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            }
+        });
+        
+        // Toggle LAN/Remote
+        toggleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleMode();
+            }
+        });
+        
+        // Close button
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,12 +82,68 @@ public class MainActivity extends Activity {
             }
         });
         
+        // Update status periodically
+        startStatusUpdateThread();
+        
         // Request permissions if needed
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!hasAllPermissions()) {
                 requestAllPermissions();
             }
         }
+    }
+
+    private void startStatusUpdateThread() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(2000); // Update every 2 seconds
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateStatus();
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
+            }
+        }).start();
+    }
+
+    private void updateStatus() {
+        String status = checker.getStatusString();
+        statusView.setText(status);
+        
+        // Update toggle button text
+        String mode = checker.getPreferredMode();
+        if ("LAN".equals(mode)) {
+            toggleButton.setText("Switch to Remote (NGrok)");
+        } else if ("REMOTE".equals(mode)) {
+            toggleButton.setText("Switch to LAN");
+        } else {
+            toggleButton.setText("No Server Detected");
+        }
+    }
+
+    private void toggleMode() {
+        String currentMode = checker.getPreferredMode();
+        SharedPreferences.Editor editor = prefs.edit();
+        
+        // Swap LAN/Remote by temporarily disabling one
+        if ("LAN".equals(currentMode)) {
+            // Force use Remote by clearing LAN (user can re-enable in Settings)
+            editor.putString("lan_ip", "");
+        } else {
+            // User needs to go to Settings to configure
+            editor.putString("force_remote", "true");
+        }
+        editor.apply();
+        
+        updateStatus();
     }
 
     private boolean hasAllPermissions() {
@@ -80,7 +158,6 @@ public class MainActivity extends Activity {
             }
         }
         
-        // Also check POST_NOTIFICATIONS for Android 13+
         if (Build.VERSION.SDK_INT >= 33) {
             if (ContextCompat.checkSelfPermission(this, "android.permission.POST_NOTIFICATIONS") 
                     != PackageManager.PERMISSION_GRANTED) {
@@ -104,22 +181,11 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void closeAppAfterDelay(long delayMs) {
-        new android.os.Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-            }
-        }, delayMs);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            // Whether granted or denied, close the app
-            // The service is already running in background
-            closeAppAfterDelay(500);
+            // Permissions granted or denied, continue anyway
         }
     }
 }

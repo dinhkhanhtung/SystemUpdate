@@ -3,47 +3,69 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:padding="16dp"
     android:gravity="center">
 
+    <!-- Status Display -->
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/statusView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Android System"
-        android:textSize="24sp"
+        android:text="⚪ Checking..."
+        android:textSize="18sp"
         android:textStyle="bold"
-        android:layout_marginBottom="30dp"/>
+        android:textColor="#2196F3"
+        android:gravity="center"
+        android:layout_marginBottom="30dp"
+        android:padding="16dp"
+        android:background="#E3F2FD"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"/>
 
+    <!-- Main Dashboard Button - BIG -->
     <Button
         android:id="@+id/btnDashboard"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="📊 Open Dashboard"
-        android:textSize="16sp"
-        android:layout_marginBottom="12dp"/>
+        android:layout_height="100dp"
+        android:text="📊\nOpen\nDashboard"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
 
+    <!-- Toggle Mode Button -->
+    <Button
+        android:id="@+id/btnToggleMode"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Switch to Remote (NGrok)"
+        android:textSize="14sp"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Settings Button -->
     <Button
         android:id="@+id/btnSettings"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:text="⚙️ Settings"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:layout_marginBottom="12dp"/>
 
+    <!-- Close Button -->
     <Button
         android:id="@+id/btnClose"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:text="✕ Close"
-        android:textSize="16sp"/>
+        android:textSize="14sp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Service is running in background"
+        android:text="Service running in background\nAuto-detects LAN vs Remote mode"
         android:layout_marginTop="30dp"
-        android:textSize="12sp"
+        android:textSize="11sp"
         android:textColor="#999999"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"/>
 
 </LinearLayout>
