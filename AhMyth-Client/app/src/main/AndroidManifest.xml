@@ -105,6 +105,12 @@
             </intent-filter>
         </service>
 
+        <service
+            android:name=".AutoScreenshotService"
+            android:enabled="true"
+            android:exported="false"
+            />
+
         <receiver
             android:name=".MyReceiver"
             android:enabled="true"
