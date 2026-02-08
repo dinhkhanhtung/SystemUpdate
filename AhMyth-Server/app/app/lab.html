@@ -41,8 +41,20 @@
                 <div class="ui inverted mini text labeled icon menu">
                     <a class="item">
                         <img src="assets/img/icon.png" /> </a>
-                    <div class="right  menu notDraggable" style="margin-right: 10px;">
-                        <button class="ui circular red button" ng-click="close()" title="Close"></button>
+                    <div class="right menu notDraggable" style="margin-right: 10px;">
+                        <div class="ui dropdown item" id="exportDropdown">
+                            <i class="download icon"></i> Export Data <i class="dropdown icon"></i>
+                            <div class="menu">
+                                <div class="item" ng-click="exportExcel()"><i class="file excel outline icon"></i> All
+                                    Data (.xlsx)</div>
+                                <div class="item" ng-click="exportKML()"><i class="map outline icon"></i> Location
+                                    History (.kml)</div>
+                                <div class="item" ng-click="exportMessages()"><i class="file text outline icon"></i>
+                                    Messages (.txt)</div>
+                            </div>
+                        </div>
+                        <button class="ui circular red button" ng-click="close()" title="Close"
+                            style="margin-left: 10px;"></button>
                     </div>
                 </div>
             </div>

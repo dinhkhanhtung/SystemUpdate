@@ -6,21 +6,35 @@
                     <div class="ui label">
                         Seconds
                     </div>
-                    <input type="text" ng-model="sec" placeholder="">
+                    <input type="text" ng-model="sec" placeholder="e.g. 10">
                 </div>
-                <button class="ui labeled icon black button" ng-click="Record(sec)"><i class="photo icon"></i>Record</button>
+                <button class="ui labeled icon black button" id="recordBtn" ng-click="Record(sec)"><i
+                        class="microphone icon"></i>Record</button>
             </div>
         </div>
-        <div class="row  h70">
+
+        <div class="row">
+            <div class="column">
+                <div class="ui indicating progress" id="recordProgress" style="display: none; margin: 10px 20px;">
+                    <div class="bar">
+                        <div class="progress"></div>
+                    </div>
+                    <div class="label" id="recordProgressLabel">Recording...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row h70">
             <div class="column h100">
                 <div class="ui segment">
-                    <audio controls id="player">
-                   <source src="" id="sourceMp3" type="audio/mp3">
-                      Not Supported.
-                </audio>
+                    <audio controls id="player" style="width: 100%;">
+                        <source src="" id="sourceMp3" type="audio/mp3">
+                        Not Supported.
+                    </audio>
                     <br>
                     <br>
-                    <button class="ui red button" ng-click="SaveAudio()" ng-disabled="isAudio"><i class="save icon" ></i>Save</button>
+                    <button class="ui red button" id="saveAudioBtn" ng-click="SaveAudio()" ng-disabled="isAudio"><i
+                            class="save icon"></i>Save</button>
                 </div>
             </div>
         </div>

