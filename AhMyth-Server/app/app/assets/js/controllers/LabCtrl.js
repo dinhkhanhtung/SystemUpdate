@@ -198,6 +198,17 @@ app.controller("CamCtrl", function ($scope, $rootScope) {
         socket.emit(ORDER, { order: camera, extra: $camCtrl.selectedCam.id });
     }
 
+    // Rotate Logic
+    var currentRotation = 0;
+    $camCtrl.rotateImage = () => {
+        var img = document.getElementById('cameraImage');
+        if (img) {
+            currentRotation += 90;
+            if (currentRotation >= 360) currentRotation = 0;
+            img.style.transform = 'rotate(' + currentRotation + 'deg)';
+        }
+    };
+
 
 
 

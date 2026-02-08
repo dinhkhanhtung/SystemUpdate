@@ -449,3 +449,8 @@
 [2026-02-08T06:05:18.562Z] Server Starting...
 [2026-02-08T06:05:18.563Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
 [2026-02-08T06:05:18.569Z] ✅ Database and Export Manager initialized
+[2026-02-08T06:23:16.796Z] Server is now listening on port: 42474
+[2026-02-08T06:23:16.796Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T06:23:20.801Z] New Socket.IO connection! ID: /#34iRI-zLL25V3efHAAAA IP: ::ffff:217.138.220.122
+[2026-02-08T06:23:20.802Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T06:23:20.813Z] 💾 Victim saved to database: e702c6c3ca97f8de
