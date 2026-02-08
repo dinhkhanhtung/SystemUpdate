@@ -249,6 +249,12 @@
         "longitude": 105.7912492,
         "accuracy": null,
         "timestamp": "2026-02-08T07:29:30.309Z"
+      },
+      {
+        "latitude": 21.6212711,
+        "longitude": 105.7912492,
+        "accuracy": null,
+        "timestamp": "2026-02-08T07:31:35.874Z"
       }
     ]
   },

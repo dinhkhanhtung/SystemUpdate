@@ -98,7 +98,6 @@ public class ConnectionManager {
                                 Log.e("ConnectionManager", "Error syncing offline buffer", e);
                             }
                         }
-                        }
                     }).start();
                 }
             });

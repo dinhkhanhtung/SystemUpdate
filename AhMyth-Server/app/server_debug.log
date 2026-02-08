@@ -555,3 +555,6 @@
 [2026-02-08T07:31:30.951Z] New Socket.IO connection! ID: /#Xhv8ltd5CjO5VaI0AAAA IP: ::ffff:217.138.220.122
 [2026-02-08T07:31:30.953Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
 [2026-02-08T07:31:30.965Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T07:31:47.243Z] Server Starting...
+[2026-02-08T07:31:47.244Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-08T07:31:47.250Z] ✅ Database and Export Manager initialized
