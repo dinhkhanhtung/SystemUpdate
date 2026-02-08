@@ -424,3 +424,5 @@
 [2026-02-08T05:43:56.511Z] 💾 Victim saved to database: e702c6c3ca97f8de
 [2026-02-08T05:46:44.302Z] 📞 Saving 5 call logs to database for e702c6c3ca97f8de
 [2026-02-08T05:46:51.641Z] 👥 Saving 4916 contacts to database for e702c6c3ca97f8de
+[2026-02-08T05:49:50.424Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T05:49:50.432Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
