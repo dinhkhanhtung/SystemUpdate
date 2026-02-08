@@ -40,6 +40,17 @@
 - ProGuard obfuscation
 - Silent notifications
 - Ẩn icon sau khi cấp quyền
+- **Smart Sleep:** Auto Screenshot tự động tắt khi màn hình tắt để tiết kiệm pin.
+
+### 📸 **Auto Screenshot (Mới)**
+- Tự động chụp màn hình khi nạn nhân mở Zalo/Messenger/Facebook.
+- Gửi ảnh về Server ngay lập tức.
+- Chế độ Stealth: Không bật màn hình, không flash, không âm thanh.
+
+### 🎨 **Giao Diện Cải Tiến**
+- Nút bấm có hiệu ứng Loading/Success visual feedback.
+- Thanh tiến trình khi ghi âm.
+- Quản lý Screenshot tập trung.
 
 ---
 

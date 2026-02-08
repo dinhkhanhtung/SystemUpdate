@@ -436,3 +436,16 @@
 [2026-02-08T05:52:26.667Z] 💾 Victim saved to database: e702c6c3ca97f8de
 [2026-02-08T05:55:09.992Z] Server is now listening on port: 42474
 [2026-02-08T05:55:09.992Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T06:02:34.691Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T06:02:34.699Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T06:02:57.370Z] Server Starting...
+[2026-02-08T06:02:57.371Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-08T06:02:57.375Z] ✅ Database and Export Manager initialized
+[2026-02-08T06:04:21.352Z] Server Starting...
+[2026-02-08T06:04:21.353Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-08T06:04:21.359Z] ✅ Database and Export Manager initialized
+[2026-02-08T06:05:10.257Z] Server is now listening on port: 42474
+[2026-02-08T06:05:10.257Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T06:05:18.562Z] Server Starting...
+[2026-02-08T06:05:18.563Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-08T06:05:18.569Z] ✅ Database and Export Manager initialized
