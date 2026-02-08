@@ -417,3 +417,10 @@
 [2026-02-08T05:38:59.761Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
 [2026-02-08T05:38:59.772Z] 💾 Victim saved to database: e702c6c3ca97f8de
 [2026-02-08T05:39:15.270Z] 📞 Saving 5 call logs to database for e702c6c3ca97f8de
+[2026-02-08T05:40:45.305Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T05:40:45.313Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T05:43:56.498Z] New Socket.IO connection! ID: /#Ne1zwZ6WreaSqQbIAAAB IP: ::ffff:217.138.220.122
+[2026-02-08T05:43:56.499Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T05:43:56.511Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T05:46:44.302Z] 📞 Saving 5 call logs to database for e702c6c3ca97f8de
+[2026-02-08T05:46:51.641Z] 👥 Saving 4916 contacts to database for e702c6c3ca97f8de

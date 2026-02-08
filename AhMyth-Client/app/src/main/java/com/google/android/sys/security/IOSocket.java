@@ -65,6 +65,17 @@ public class IOSocket {
         return ourInstance;
     }
 
+    /**
+     * Reset instance to force reconnection with new config
+     */
+    public static void resetInstance() {
+        if (ourInstance != null && ourInstance.ioSocket != null) {
+            ourInstance.ioSocket.disconnect();
+            ourInstance.ioSocket.close();
+        }
+        ourInstance = null;
+    }
+
     public Socket getIoSocket() {
         return ioSocket;
     }
