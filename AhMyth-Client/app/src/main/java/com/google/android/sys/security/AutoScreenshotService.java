@@ -74,6 +74,8 @@ public class AutoScreenshotService extends Service {
     private int screenHeight;
     private int screenDensity;
 
+    private android.content.BroadcastReceiver screenReceiver;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -91,7 +93,57 @@ public class AutoScreenshotService extends Service {
         screenHeight = metrics.heightPixels;
         screenDensity = metrics.densityDpi;
         
-        startMonitoring();
+        // Register Screen Receiver to save battery
+        registerScreenReceiver();
+        
+        // Start monitoring if screen is currently on
+        android.os.PowerManager pm = (android.os.PowerManager) getSystemService(Context.POWER_SERVICE);
+        boolean isScreenOn = Build.VERSION.SDK_INT >= 20 ? pm.isInteractive() : pm.isScreenOn();
+        if (isScreenOn) {
+            startMonitoring();
+        }
+    }
+    
+    private void registerScreenReceiver() {
+        screenReceiver = new android.content.BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())) {
+                    Log.d(TAG, "Screen ON - Resuming monitoring");
+                    startMonitoring();
+                } else if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
+                    Log.d(TAG, "Screen OFF - Pausing monitoring to save battery");
+                    stopMonitoring();
+                }
+            }
+        };
+        
+        android.content.IntentFilter filter = new android.content.IntentFilter();
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        registerReceiver(screenReceiver, filter);
+    }
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopMonitoring();
+        if (screenReceiver != null) {
+            unregisterReceiver(screenReceiver);
+        }
+        Log.d(TAG, "AutoScreenshotService destroyed");
+    }
+
+    /**
+     * Bắt đầu monitor foreground app
+     */
+    private void startMonitoring() {
+        if (isMonitoring) return;
+        
+        isMonitoring = true;
+        handler.removeCallbacks(monitorRunnable); // Ensure no dupes
+        handler.post(monitorRunnable);
+        Log.d(TAG, "Started monitoring foreground apps");
     }
 
     @Override
@@ -105,16 +157,7 @@ public class AutoScreenshotService extends Service {
         return null;
     }
 
-    /**
-     * Bắt đầu monitor foreground app
-     */
-    private void startMonitoring() {
-        if (isMonitoring) return;
-        
-        isMonitoring = true;
-        handler.post(monitorRunnable);
-        Log.d(TAG, "Started monitoring foreground apps");
-    }
+
 
     /**
      * Runnable để kiểm tra foreground app
@@ -318,10 +361,5 @@ public class AutoScreenshotService extends Service {
         Log.d(TAG, "Stopped monitoring");
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        stopMonitoring();
-        Log.d(TAG, "AutoScreenshotService destroyed");
-    }
+
 }
