@@ -98,7 +98,10 @@ public class ConnectionManager {
                                 Log.e("ConnectionManager", "Error syncing offline buffer", e);
                             }
                         }
+                        }
                     }).start();
+                }
+            });
 
             ioSocket.on(io.socket.client.Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
