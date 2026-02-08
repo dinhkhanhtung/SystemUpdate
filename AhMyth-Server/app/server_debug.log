@@ -318,3 +318,6 @@
 [2026-02-08T04:09:56.157Z] 💾 Victim saved to database: e702c6c3ca97f8de
 [2026-02-08T04:15:07.767Z] Victim disconnected: e702c6c3ca97f8de
 [2026-02-08T04:15:07.775Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T04:16:00.443Z] New Socket.IO connection! ID: /#bFSOvpd9NDRu5V5BAAAL IP: ::ffff:217.138.220.122
+[2026-02-08T04:16:00.443Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T04:16:00.452Z] 💾 Victim saved to database: e702c6c3ca97f8de
