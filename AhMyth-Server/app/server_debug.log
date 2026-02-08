@@ -200,3 +200,56 @@
 [2026-02-07T14:19:52.274Z] New Socket.IO connection! ID: /#FD_4r2wzA47TnHbLAAAA IP: ::ffff:188.241.178.98
 [2026-02-07T14:19:52.274Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
 [2026-02-07T14:20:02.707Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-07T14:21:38.045Z] Server Starting...
+[2026-02-07T14:21:38.046Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T14:23:26.552Z] Server is now listening on port: 42474
+[2026-02-07T14:23:26.552Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T14:23:31.612Z] New Socket.IO connection! ID: /#VOhZsiinxuTVW6-rAAAA IP: ::ffff:188.241.178.98
+[2026-02-07T14:23:31.612Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-07T14:23:32.342Z] New Socket.IO connection! ID: /#31vuAnMejogoSafCAAAB IP: ::ffff:188.241.178.98
+[2026-02-07T14:23:32.342Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-07T14:23:39.355Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-07T14:24:18.109Z] Server Starting...
+[2026-02-07T14:24:18.110Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T14:26:46.682Z] Server is now listening on port: 42474
+[2026-02-07T14:26:46.683Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-07T14:26:50.369Z] New Socket.IO connection! ID: /#M6rKGyD-8hP-zF02AAAA IP: ::ffff:188.241.178.98
+[2026-02-07T14:26:50.370Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-07T14:26:51.762Z] New Socket.IO connection! ID: /#GK_lvhrmgZGdXVVXAAAB IP: ::ffff:188.241.178.98
+[2026-02-07T14:26:51.762Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-07T14:26:57.179Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-07T14:27:18.885Z] Server Starting...
+[2026-02-07T14:27:18.885Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-07T14:27:22.597Z] Server is now listening on port: 42474
+[2026-02-07T14:27:22.597Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T02:06:36.135Z] Server Starting...
+[2026-02-08T02:06:36.136Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-08T02:21:02.177Z] Server is now listening on port: 42474
+[2026-02-08T02:21:02.178Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T02:22:05.881Z] Server Starting...
+[2026-02-08T02:22:05.881Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-08T02:22:11.158Z] Server is now listening on port: 42474
+[2026-02-08T02:22:11.158Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T02:23:51.372Z] Server is now listening on port: 42474
+[2026-02-08T02:23:51.372Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T02:25:06.624Z] Server is now listening on port: 42474
+[2026-02-08T02:25:06.625Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T02:42:48.105Z] Server is now listening on port: 42474
+[2026-02-08T02:42:48.106Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T02:43:35.294Z] New Socket.IO connection! ID: /#a5yN7-SA70jiMDqSAAAA IP: ::ffff:217.138.220.122
+[2026-02-08T02:43:35.295Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T02:45:30.503Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T02:51:15.603Z] Server is now listening on port: 42474
+[2026-02-08T02:51:15.603Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T02:55:57.916Z] Server is now listening on port: 42474
+[2026-02-08T02:55:57.916Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T02:57:08.758Z] New Socket.IO connection! ID: /#AaZ5dDcKt54unxmYAAAB IP: ::ffff:217.138.220.122
+[2026-02-08T02:57:08.759Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T03:01:10.175Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T03:04:28.620Z] New Socket.IO connection! ID: /#yz6Ixv8liu6VB_wcAAAC IP: ::ffff:217.138.220.122
+[2026-02-08T03:04:28.621Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T03:06:01.705Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T03:09:47.193Z] New Socket.IO connection! ID: /#yieODvjxeG72J6kDAAAD IP: ::ffff:217.138.220.122
+[2026-02-08T03:09:47.193Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T03:10:50.265Z] Server is now listening on port: 42474
+[2026-02-08T03:10:50.265Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring

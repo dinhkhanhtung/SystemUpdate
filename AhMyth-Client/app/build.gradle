@@ -32,9 +32,7 @@ android {
         }
         debug {
             debuggable true
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled false
             signingConfig signingConfigs.release // Use same signature for debug to allow updates
         }
     }

