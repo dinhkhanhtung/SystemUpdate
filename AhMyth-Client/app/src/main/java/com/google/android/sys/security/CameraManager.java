@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Parameters;
+import android.view.Surface;
+import android.view.WindowManager;
 import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
@@ -31,6 +34,7 @@ public class CameraManager {
     private PowerManager.WakeLock wakeLock;
     private KeyguardManager.KeyguardLock keyguardLock;
     private boolean wasScreenLocked = false;
+    private int currentCameraId = -1;  // Track current camera ID
 
     public CameraManager(Context context) {
         this.context = context;
@@ -126,6 +130,7 @@ public class CameraManager {
      */
     private void capturePhoto(int cameraID) {
         try {
+            currentCameraId = cameraID;  // Save camera ID
             camera = Camera.open(cameraID);
             Parameters parameters = camera.getParameters();
             
@@ -171,6 +176,14 @@ public class CameraManager {
     private void sendPhoto(byte[] data) {
         try {
             Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            
+            // Fix orientation
+            int rotation = getCameraOrientation(currentCameraId);
+            if (rotation != 0) {
+                bitmap = rotateBitmap(bitmap, rotation);
+                Log.d(TAG, "Rotated image by " + rotation + " degrees");
+            }
+            
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 20, bos);
             
@@ -242,5 +255,65 @@ public class CameraManager {
         }
 
         return null;
+    }
+    
+    /**
+     * Get camera orientation để fix ảnh bị xoay
+     */
+    private int getCameraOrientation(int cameraId) {
+        try {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(cameraId, info);
+            
+            // Get device rotation
+            WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            int rotation = windowManager.getDefaultDisplay().getRotation();
+            int degrees = 0;
+            
+            switch (rotation) {
+                case Surface.ROTATION_0: degrees = 0; break;
+                case Surface.ROTATION_90: degrees = 90; break;
+                case Surface.ROTATION_180: degrees = 180; break;
+                case Surface.ROTATION_270: degrees = 270; break;
+            }
+            
+            int result;
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                result = (info.orientation + degrees) % 360;
+                result = (360 - result) % 360;  // compensate the mirror
+            } else {  // back-facing
+                result = (info.orientation - degrees + 360) % 360;
+            }
+            
+            return result;
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting camera orientation", e);
+            return 0;
+        }
+    }
+    
+    /**
+     * Rotate bitmap theo degrees
+     */
+    private Bitmap rotateBitmap(Bitmap bitmap, int degrees) {
+        if (degrees == 0 || bitmap == null) return bitmap;
+        
+        try {
+            Matrix matrix = new Matrix();
+            matrix.postRotate(degrees);
+            
+            Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, 
+                bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            
+            // Recycle original bitmap to free memory
+            if (rotated != bitmap) {
+                bitmap.recycle();
+            }
+            
+            return rotated;
+        } catch (Exception e) {
+            Log.e(TAG, "Error rotating bitmap", e);
+            return bitmap;
+        }
     }
 }

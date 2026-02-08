@@ -3,14 +3,14 @@
     "e702c6c3ca97f8de": {
       "id": "e702c6c3ca97f8de",
       "ip": "217.138.220.122",
-      "port": 43634,
+      "port": 44002,
       "country": "gb",
       "manufacturer": "Xiaomi",
       "model": "M2101K6G",
       "android_version": "13",
       "first_seen": "2026-02-08T03:29:36.074Z",
-      "last_seen": "2026-02-08T05:24:48.074Z",
-      "total_connections": 25,
+      "last_seen": "2026-02-08T05:38:59.764Z",
+      "total_connections": 27,
       "is_online": 1
     }
   },
@@ -159,6 +159,18 @@
         "longitude": 105.7936234,
         "accuracy": null,
         "timestamp": "2026-02-08T05:24:50.201Z"
+      },
+      {
+        "latitude": 21.6215055,
+        "longitude": 105.7921559,
+        "accuracy": null,
+        "timestamp": "2026-02-08T05:34:38.606Z"
+      },
+      {
+        "latitude": 21.6215055,
+        "longitude": 105.7921559,
+        "accuracy": null,
+        "timestamp": "2026-02-08T05:39:02.282Z"
       }
     ]
   },
@@ -229,6 +241,86 @@
         "duration": "0",
         "timestamp": "2026-02-08T05:24:57.541Z",
         "retrieved_at": "2026-02-08T05:24:57.541Z"
+      },
+      {
+        "phone_number": "0987627777",
+        "contact_name": "Unknown",
+        "call_type": "incoming",
+        "duration": "104",
+        "timestamp": "2026-02-08T05:35:20.657Z",
+        "retrieved_at": "2026-02-08T05:35:20.658Z"
+      },
+      {
+        "phone_number": "0987627777",
+        "contact_name": "Unknown",
+        "call_type": "outgoing",
+        "duration": "19",
+        "timestamp": "2026-02-08T05:35:20.664Z",
+        "retrieved_at": "2026-02-08T05:35:20.664Z"
+      },
+      {
+        "phone_number": "18001166",
+        "contact_name": "Điểm giao dịch VNPT - VinaPhone Nguyễn Du",
+        "call_type": "outgoing",
+        "duration": "180",
+        "timestamp": "2026-02-08T05:35:20.679Z",
+        "retrieved_at": "2026-02-08T05:35:20.679Z"
+      },
+      {
+        "phone_number": "0978759766",
+        "contact_name": "Father",
+        "call_type": "missed",
+        "duration": "31",
+        "timestamp": "2026-02-08T05:35:20.688Z",
+        "retrieved_at": "2026-02-08T05:35:20.688Z"
+      },
+      {
+        "phone_number": "0978759766",
+        "contact_name": "Father",
+        "call_type": "outgoing",
+        "duration": "0",
+        "timestamp": "2026-02-08T05:35:20.701Z",
+        "retrieved_at": "2026-02-08T05:35:20.701Z"
+      },
+      {
+        "phone_number": "0987627777",
+        "contact_name": "Unknown",
+        "call_type": "incoming",
+        "duration": "104",
+        "timestamp": "2026-02-08T05:39:15.270Z",
+        "retrieved_at": "2026-02-08T05:39:15.270Z"
+      },
+      {
+        "phone_number": "0987627777",
+        "contact_name": "Unknown",
+        "call_type": "outgoing",
+        "duration": "19",
+        "timestamp": "2026-02-08T05:39:15.277Z",
+        "retrieved_at": "2026-02-08T05:39:15.277Z"
+      },
+      {
+        "phone_number": "18001166",
+        "contact_name": "Điểm giao dịch VNPT - VinaPhone Nguyễn Du",
+        "call_type": "outgoing",
+        "duration": "180",
+        "timestamp": "2026-02-08T05:39:15.288Z",
+        "retrieved_at": "2026-02-08T05:39:15.288Z"
+      },
+      {
+        "phone_number": "0978759766",
+        "contact_name": "Father",
+        "call_type": "missed",
+        "duration": "31",
+        "timestamp": "2026-02-08T05:39:15.301Z",
+        "retrieved_at": "2026-02-08T05:39:15.301Z"
+      },
+      {
+        "phone_number": "0978759766",
+        "contact_name": "Father",
+        "call_type": "outgoing",
+        "duration": "0",
+        "timestamp": "2026-02-08T05:39:15.312Z",
+        "retrieved_at": "2026-02-08T05:39:15.312Z"
       }
     ]
   },
