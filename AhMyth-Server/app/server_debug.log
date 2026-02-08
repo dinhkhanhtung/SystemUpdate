@@ -501,3 +501,24 @@
 [2026-02-08T07:03:21.066Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
 [2026-02-08T07:03:21.075Z] 💾 Victim saved to database: e702c6c3ca97f8de
 [2026-02-08T07:03:38.265Z] 📞 Saving 5 call logs to database for e702c6c3ca97f8de
+[2026-02-08T07:06:08.623Z] 👥 Saving 4916 contacts to database for e702c6c3ca97f8de
+[2026-02-08T07:07:23.404Z] Server Starting...
+[2026-02-08T07:07:23.405Z] Log file path: D:\Dev\Projects\Android\Android-RAT-master\SystemUpdate\AhMyth-Server\app\server_debug.log
+[2026-02-08T07:07:23.410Z] ✅ Database and Export Manager initialized
+[2026-02-08T07:07:28.995Z] Server is now listening on port: 42474
+[2026-02-08T07:07:28.995Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T07:07:36.433Z] New Socket.IO connection! ID: /#pvwagLxOaBfncJfwAAAA IP: ::ffff:217.138.220.122
+[2026-02-08T07:07:36.435Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T07:07:36.454Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T07:08:54.608Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T07:08:54.616Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T07:09:32.165Z] Server is now listening on port: 42474
+[2026-02-08T07:09:32.166Z] IMPORTANT: Use ahmythserver.duckdns.org in APK Builder for INTERNET monitoring
+[2026-02-08T07:09:47.102Z] New Socket.IO connection! ID: /#5X7DuFs0F0kb4ufaAAAB IP: ::ffff:217.138.220.122
+[2026-02-08T07:09:47.103Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T07:09:47.116Z] 💾 Victim saved to database: e702c6c3ca97f8de
+[2026-02-08T07:12:03.153Z] Victim disconnected: e702c6c3ca97f8de
+[2026-02-08T07:12:03.162Z] 💾 Victim marked offline in database: e702c6c3ca97f8de
+[2026-02-08T07:13:33.705Z] New Socket.IO connection! ID: /#LUpmHLGqL7MtWQEqAAAC IP: ::ffff:217.138.220.122
+[2026-02-08T07:13:33.705Z] Query params: {"model":"M2101K6G","EIO":"3","id":"e702c6c3ca97f8de","transport":"polling","release":"13","manf":"Xiaomi"}
+[2026-02-08T07:13:33.717Z] 💾 Victim saved to database: e702c6c3ca97f8de

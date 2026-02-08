@@ -31,9 +31,9 @@
                         <div class="ui black label">
                             Use HTTPS
                         </div>
-                        <div class="ui checkbox" style="margin-top: 10px">
-                            <input ng-model="useHttps" type="checkbox">
-                            <label>Enable for ngrok</label>
+                        <div class="ui checkbox" style="margin-top: 10px; margin-left: 10px;">
+                            <input ng-model="useHttps" type="checkbox" id="https-check">
+                            <label for="https-check">Enable for ngrok</label>
                         </div>
                     </div>
                 </td>
@@ -54,7 +54,8 @@
         <tbody ng-hide="!bindApk.enable">
             <tr class="center aligned">
                 <td colspan="2">
-                    <button ng-click="BrowseApk()" ng-disabled="!bindApk.enable" class="ui black labeled icon button "><i class="folder open icon" ></i>Browse Apk</button>
+                    <button ng-click="BrowseApk()" ng-disabled="!bindApk.enable"
+                        class="ui black labeled icon button "><i class="folder open icon"></i>Browse Apk</button>
 
                 </td>
             </tr>
@@ -79,7 +80,8 @@
         <tfoot class="full-width">
             <tr class="center aligned">
                 <th colspan="2">
-                    <button ng-click="Build(srcIP,srcPort,useHttps)" class="ui labeled icon red button"><i class="lightning icon" ></i>Build</button>
+                    <button ng-click="Build(srcIP,srcPort,useHttps)" class="ui labeled icon red button"><i
+                            class="lightning icon"></i>Build</button>
                 </th>
             </tr>
         </tfoot>

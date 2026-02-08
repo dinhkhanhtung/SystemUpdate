@@ -3,14 +3,14 @@
     "e702c6c3ca97f8de": {
       "id": "e702c6c3ca97f8de",
       "ip": "217.138.220.122",
-      "port": 45698,
+      "port": 45768,
       "country": "gb",
       "manufacturer": "Xiaomi",
       "model": "M2101K6G",
       "android_version": "13",
       "first_seen": "2026-02-08T03:29:36.074Z",
-      "last_seen": "2026-02-08T07:03:21.069Z",
-      "total_connections": 35,
+      "last_seen": "2026-02-08T07:13:33.708Z",
+      "total_connections": 38,
       "is_online": 1
     }
   },
@@ -213,6 +213,24 @@
         "longitude": 105.7912509,
         "accuracy": null,
         "timestamp": "2026-02-08T07:03:24.156Z"
+      },
+      {
+        "latitude": 21.6212675,
+        "longitude": 105.7912509,
+        "accuracy": null,
+        "timestamp": "2026-02-08T07:07:40.046Z"
+      },
+      {
+        "latitude": 21.6212675,
+        "longitude": 105.7912509,
+        "accuracy": null,
+        "timestamp": "2026-02-08T07:09:50.278Z"
+      },
+      {
+        "latitude": 21.6212711,
+        "longitude": 105.7912492,
+        "accuracy": null,
+        "timestamp": "2026-02-08T07:13:36.484Z"
       }
     ]
   },
